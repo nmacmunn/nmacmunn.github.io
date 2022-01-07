@@ -6,40 +6,25 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="paper.css" />
     <title>Neil MacMunn - Software Developer</title>
-    <style>
-      h1,
-      h2,
-      h3,
-      h4 {
-        margin: 0;
-      }
-      .card {
-        height: 100%;
-      }
-    </style>
   </head>
   <body>
     <div class="container" style="margin-top: 80px">
       <div class="row">
-        <div class="col">
-          <label for="tab1" class="paper-btn margin-right">Projects</label>
-          <!-- <label for="tab2" class="paper-btn margin-right">Resume</label> -->
-          <label for="tab3" class="paper-btn margin-right">About</label>
-          <label for="tab4" class="paper-btn margin-right">Hire</label>
-        </div>
+        <label for="tab1" class="paper-btn margin-right">Projects</label>
+        <label for="tab2" class="paper-btn margin-right">Resume</label>
+        <label for="tab3" class="paper-btn margin-right">About</label>
+        <label for="tab4" class="paper-btn margin-right">Hire</label>
       </div>
       <div class="row">
-        <div class="col">
-          <h3>Hello!</h3>
-          <p>
-            I'm <b>Neil</b>, a software developer currently based in Asheville,
-            North Carolina. I mostly build productivity tools using TypeScript.
-          </p>
-        </div>
+        <h3>Hello!</h3>
+        <p>
+          I'm <b>Neil</b>, a software developer currently based in Asheville,
+          North Carolina. I mostly build productivity tools using TypeScript.
+        </p>
       </div>
       <div class="tabs">
         <input id="tab1" type="radio" name="tabs" />
-        <!-- <input id="tab2" type="radio" name="tabs" /> -->
+        <input id="tab2" type="radio" name="tabs" />
         <input id="tab3" type="radio" name="tabs" />
         <input id="tab4" type="radio" name="tabs" />
         <div class="content" id="content1">
@@ -48,9 +33,7 @@
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Indecisionator</h4>
-                  <p class="card-text">
-                    A web app that helps you make better decisions
-                  </p>
+                  <p class="card-text">The better decisions app</p>
                   <a
                     class="card-link"
                     href="https://indecisionator.web.app"
@@ -70,7 +53,7 @@
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">thatfeel.in</h4>
-                  <p class="card-text">A facial expression party game</p>
+                  <p class="card-text">Facial expression party game</p>
                   <a
                     class="card-link"
                     href="https://thatfeel.in"
@@ -80,82 +63,123 @@
                 </div>
               </div>
             </div>
+            <div class="col col-4">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Word Birds</h4>
+                  <p class="card-text">Side-scroller typing game</p>
+                  <a
+                    class="card-link"
+                    href="https://playwordbirds.com/"
+                    target="_blank"
+                    >Demo</a
+                  >
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- <div class="content" id="content2">
-          <div class="row">
-            <div class="col">Coming soon...</div>
-          </div>
-        </div> -->
+        <div class="content" id="content2">
+          <div class="row">Coming soon...</div>
+        </div>
         <div class="content" id="content3">
+          <h4>Utility Belt</h4>
           <div class="row">
-            <div class="col">
-              <b>Technologies I'm interested in</b>
-              <ul>
-                <li>Web Assembly</li>
-                <li>Code Mods</li>
-              </ul>
-              <b>Books I love</b>
-              <ul>
-                <li>Thinking Fast and Slow</li>
-                <li>Clean Code</li>
-              </ul>
-            </div>
+            <a href="https://www.typescriptlang.org/" target="_blank"
+              >TypeScript</a
+            >: JavaScript made scalable
+          </div>
+          <div class="row">
+            <a href="https://svelte.dev/" target="_blank">Svelte</a>: Efficient
+            client-side rendering
+          </div>
+          <div class="row">
+            <a href="https://xstate.js.org/" target="_blank">XState</a>:
+            Application state management
+          </div>
+          <h4>Technology I'm excited about</h4>
+          <div class="row">
+            <a href="https://webassembly.org/" class="warning" target="_blank"
+              >WebAssembly</a
+            >: Native performance, JavaScript ubiquity
+          </div>
+          <h4>Bookshelf</h4>
+          <div class="row">
+            <a
+              href="https://www.oreilly.com/library/view/clean-code-a/9780136083238/"
+              class="success"
+              target="_blank"
+              >Clean Code</a
+            >: Software craftsmanship manifesto
+          </div>
+          <div class="row">
+            <a
+              href="https://www.simonandschuster.com/books/Managing-the-Design-Factory/Donald-Reinertsen/9780684839912"
+              class="success"
+              target="_blank"
+              >Managing the Design Factory</a
+            >: Manufacturing insights applied to product development
+          </div>
+          <div class="row">
+            <a
+              href="https://us.macmillan.com/books/9780374533557/thinkingfastandslow"
+              class="success"
+              target="_blank"
+              >Thinking, Fast and Slow</a
+            >: Experimental science masterclass
           </div>
         </div>
         <div class="content" id="content4">
           <div class="row">
-            <div class="col col-fill">
-              <form id="hello" class="paper">
-                <div class="form-group">Hey Neil,</div>
-                <br />
-                <div class="form-group row flex-middle">
-                  <span class="margin-left-large">My name is</span>
-                  <input
-                    type="text"
-                    name="name"
-                    class="margin-left-small margin-right-small"
-                  />
-                  and I'm looking for help with
-                </div>
-                <div class="form-group row flex-bottom">
-                  <input
-                    type="text"
-                    name="description"
-                    class="col-fill margin-right-small"
-                  />
-                  .
-                </div>
-                <br />
-                <div class="form-group row flex-middle">
-                  <span class="margin-left-large">I have a budget of</span>
-                  <input
-                    type="text"
-                    name="budget"
-                    class="margin-left-small margin-right-small"
-                  />
-                  and a timeframe of
-                  <input
-                    type="text"
-                    name="timeframe"
-                    class="margin-left-small margin-right-small"
-                  />
-                  weeks.
-                </div>
-                <br />
-                <div class="form-group row flex-middle">
-                  <span class="margin-left-large">You can email me at</span>
-                  <input
-                    type="email"
-                    name="email"
-                    class="margin-left-small margin-right-small"
-                  />
-                  .
-                </div>
-                <br />
-                <button type="submit">Say Hello</button>
-              </form>
-            </div>
+            <form id="hello" class="paper">
+              <div class="form-group">Hey Neil,</div>
+              <br />
+              <div class="form-group row flex-middle">
+                <span class="margin-left-large">My name is</span>
+                <input
+                  type="text"
+                  name="name"
+                  class="margin-left-small margin-right-small"
+                />
+                and I'm looking for help with
+              </div>
+              <div class="form-group row flex-bottom">
+                <input
+                  type="text"
+                  name="description"
+                  class="col-fill margin-right-small"
+                />
+                .
+              </div>
+              <br />
+              <div class="form-group row flex-middle">
+                <span class="margin-left-large">I have a budget of</span>
+                <input
+                  type="text"
+                  name="budget"
+                  class="margin-left-small margin-right-small"
+                />
+                and a timeframe of
+                <input
+                  type="text"
+                  name="timeframe"
+                  class="margin-left-small margin-right-small"
+                />
+                weeks.
+              </div>
+              <br />
+              <div class="form-group row flex-middle">
+                <span class="margin-left-large">You can email me at</span>
+                <input
+                  type="email"
+                  name="email"
+                  class="margin-left-small margin-right-small"
+                />
+                .
+              </div>
+              <br />
+              <button type="submit">Say Hello</button>
+            </form>
           </div>
         </div>
       </div>

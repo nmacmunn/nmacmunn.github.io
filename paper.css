@@ -1641,7 +1641,8 @@ button,
   border-top-left-radius: 255px 15px;
   border-top-right-radius: 15px 225px; */
   transition: all 235ms ease 0s;
-  box-shadow: 15px 28px 25px -18px rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px var(--primary);
+  /* box-shadow: 15px 28px 25px -18px rgba(0, 0, 0, 0.2); */
   transition: all 235ms ease-in-out 0s;
   color: #41403e;
   color: var(--primary);
@@ -1695,7 +1696,8 @@ button:hover,
 .paper-btn:hover,
 [type="button"]:hover {
   transform: translate3d(0, 2px, 0);
-  box-shadow: 2px 8px 8px -5px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 2px 8px 8px -5px rgba(0, 0, 0, 0.3); */
+  box-shadow: 0px 0px;
 }
 button:focus,
 .paper-btn:focus,
@@ -1723,7 +1725,8 @@ button[disabled],
 }
 
 a {
-  color: #41403e;
+  color: var(--primary);
+  /* color: #41403e;
   color: var(--secondary);
   background-image: linear-gradient(
       5deg,
@@ -1736,13 +1739,33 @@ a {
     linear-gradient(15deg, transparent 25%, #0071de 35%, transparent 50%);
   background-position: 0 90%;
   background-repeat: repeat-x;
-  background-size: 4px 3px;
+  background-size: 4px 3px; */
   text-decoration: none;
+  position: relative;
 }
 a:visited {
-  color: #41403e;
-  color: var(--primary);
+  /* color: #41403e;
+  color: var(--primary); */
   text-decoration: none;
+}
+
+a::before {
+  content: "";
+  background-color: var(--secondary-light);
+  position: absolute;
+  top: 0.5em;
+  bottom: 0;
+  left: 4px;
+  right: -4px;
+  z-index: -1;
+}
+
+a.success::before {
+  background-color: var(--success-light);
+}
+
+a.warning::before {
+  background-color: var(--warning-light);
 }
 
 button.btn-primary,
@@ -1969,6 +1992,7 @@ button.btn-muted-outline:hover:active,
   position: relative;
   will-change: transform;
   word-wrap: break-word;
+  height: 100%;
 }
 .card:hover {
   transform: translate3d(0, 2px, 0);
