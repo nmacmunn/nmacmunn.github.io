@@ -229,9 +229,24 @@ article,
 aside,
 footer,
 header,
-nav,
-section {
+  /* nav,
+section { */
+nav {
   display: block;
+}
+
+section {
+  min-height: 100vh;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 235ms ease 0s;
+  opacity: 0.2;
+}
+
+section.visible {
+  opacity: 1;
 }
 
 h1 {
@@ -972,6 +987,13 @@ html {
   font-family: var(--default-font);
   /* font-family: "Neucha", sans-serif; */
   font-size: 20px;
+  scroll-snap-type: y proximity;
+}
+
+@media only screen and (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
 }
 
 p,
@@ -1695,10 +1717,12 @@ button.btn-block,
 button:hover,
 .paper-btn:hover,
 [type="button"]:hover {
-  transform: translate3d(0, 2px, 0);
-  /* box-shadow: 2px 8px 8px -5px rgba(0, 0, 0, 0.3); */
+  /* transform: translate3d(0, 2px, 0);
+  box-shadow: 2px 8px 8px -5px rgba(0, 0, 0, 0.3); */
+  transform: translate3d(2px, 2px, 0);
   box-shadow: 0px 0px;
 }
+button.focus,
 button:focus,
 .paper-btn:focus,
 [type="button"]:focus {
@@ -1706,7 +1730,9 @@ button:focus,
   border-color: var(--secondary);
   border-style: solid;
   border-width: 2px;
-  box-shadow: 2px 8px 4px -6px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 2px 8px 4px -6px rgba(0, 0, 0, 0.3); */
+  transform: translate3d(2px, 2px, 0);
+  box-shadow: 0px 0px var(--secondary);
 }
 button:active,
 .paper-btn:active,
