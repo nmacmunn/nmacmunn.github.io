@@ -11,48 +11,56 @@
     <div class="container">
       <div class="row margin-top" style="position: fixed; z-index: 1">
         <button
-          id="projects-btn"
+          id="portfolio-btn"
           class="margin-small"
-          onclick="document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })"
+          onclick="scrollToElement('portfolio')"
         >
-          Projects
+          Portfolio
         </button>
         <button
           id="resume-btn"
           class="margin-small"
-          onclick="document.getElementById('resume').scrollIntoView({ behavior: 'smooth' })"
+          onclick="scrollToElement('resume')"
         >
           Resume
         </button>
         <button
           id="about-btn"
           class="margin-small"
-          onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' })"
+          onclick="scrollToElement('about')"
         >
           About
         </button>
         <button
           id="hire-btn"
           class="margin-small"
-          onclick="document.getElementById('hire').scrollIntoView({ behavior: 'smooth' })"
+          onclick="scrollToElement('hire')"
         >
           Hire
         </button>
       </div>
-      <section>
+      <section id="top">
         <h3>Hello!</h3>
         <p>
           I'm <b>Neil</b>, a software developer currently based in Asheville,
-          North Carolina. I mostly build productivity tools using TypeScript.
+          North Carolina. I mostly build web apps and productivity tools using
+          TypeScript.
+        </p>
+        <p>
+          I care a lot about delivering simple, beautiful, and maintainable
+          products. If you do too and need some help, be sure to
+          <a href="" onclick="event.preventDefault(); scrollToElement('hire')"
+            >say hi</a
+          >.
         </p>
       </section>
-      <section id="projects">
+      <section id="portfolio">
         <div class="row">
           <div class="col sm-6 md-4">
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title">Indecisionator</h4>
-                <p class="card-text">The better decisions app</p>
+                <p class="card-text">The make better decisions app</p>
                 <a
                   class="card-link"
                   href="https://indecisionator.web.app"
@@ -72,7 +80,7 @@
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title">thatfeel.in</h4>
-                <p class="card-text">Facial expression party game</p>
+                <p class="card-text">The facial expression party game</p>
                 <a class="card-link" href="https://thatfeel.in" target="_blank"
                   >Demo</a
                 >
@@ -96,7 +104,13 @@
         </div>
       </section>
       <section id="resume">
-        <div>Coming soon...</div>
+        <p>Coming soon...</p>
+        <p>
+          In the meantime, find me on
+          <a href="https://www.linkedin.com/in/neilmacmunn" target="_blank"
+            >LinkedIn</a
+          >
+        </p>
       </section>
       <section id="about">
         <div>
@@ -148,57 +162,61 @@
         </div>
       </section>
       <section id="hire">
-        <div class="row">
-          <form id="hello" class="paper">
-            <div class="form-group">Hey Neil,</div>
-            <br />
-            <div class="form-group row flex-middle">
-              <span class="margin-left-large">My name is</span>
+        <form id="hello" class="paper">
+          <p>Hey Neil,</p>
+          <p>
+            My name is
+            <label>
               <input
                 type="text"
+                size="8"
                 name="name"
-                class="margin-left-small margin-right-small"
+                onInput="this.parentNode.dataset.value = this.value"
               />
-              and I'm looking for help with
-            </div>
-            <div class="form-group row flex-bottom">
+            </label>
+            and I'm looking for help with
+            <label>
               <input
                 type="text"
+                size="20"
                 name="description"
-                class="col-fill margin-right-small"
-              />
-              .
-            </div>
-            <br />
-            <div class="form-group row flex-middle">
-              <span class="margin-left-large">I have a budget of</span>
+                onInput="this.parentNode.dataset.value = this.value"
+              /> </label
+            >.
+          </p>
+          <p>
+            I have a budget of $<label>
               <input
                 type="text"
+                size="5"
                 name="budget"
-                class="margin-left-small margin-right-small"
+                onInput="this.parentNode.dataset.value = this.value"
               />
-              and a timeframe of
+            </label>
+            and a timeframe of
+            <label>
               <input
                 type="text"
+                size="2"
                 name="timeframe"
-                class="margin-left-small margin-right-small"
+                onInput="this.parentNode.dataset.value = this.value"
               />
-              weeks.
-            </div>
-            <br />
-            <div class="form-group row flex-middle">
-              <span class="margin-left-large">You can email me at</span>
+            </label>
+            weeks.
+          </p>
+          <p>
+            You can email me at
+            <label>
               <input
                 type="email"
                 name="email"
-                class="margin-left-small margin-right-small"
-              />
-              .
-            </div>
-            <br />
-            <button type="submit">Say Hello</button>
-          </form>
-        </div>
+                onInput="this.parentNode.dataset.value = this.value"
+              /> </label
+            >.
+          </p>
+          <br />
+          <button type="submit">Say Hello</button>
+        </form>
       </section>
     </div>
   </body>
@@ -219,7 +237,7 @@
 
 My name is ${name} and I'm looking for help with ${description}. 
 
-I have a budget of ${budget} and a timeframe of ${timeframe} weeks.
+I have a budget of $${budget} and a timeframe of ${timeframe} weeks.
 
 You can email me at ${email}.
 `);
@@ -250,5 +268,9 @@ You can email me at ${email}.
     sections.forEach((element) => {
       observer.observe(element);
     });
+
+    function scrollToElement(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
   </script>
 </html>
