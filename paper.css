@@ -3,7 +3,7 @@
 /**
   Global PaperCSS Config
 */
-@import url("https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC|Inconsolata|Bitter");
+@import url("https://fonts.googleapis.com/css?family=Inconsolata|Bitter");
 html {
   --primary: #41403e;
   --secondary: #0071de;
@@ -987,7 +987,18 @@ html {
   font-family: var(--default-font);
   /* font-family: "Neucha", sans-serif; */
   font-size: 20px;
+  overflow-y: hidden;
+}
+
+body {
+  height: 100vh;
+  overflow-y: auto;
   scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+#top-btn.focus {
+  opacity: 0;
 }
 
 @media only screen and (max-width: 480px) {
@@ -1722,7 +1733,7 @@ button:hover,
   transform: translate3d(2px, 2px, 0);
   box-shadow: 0px 0px;
 }
-button.focus,
+.paper-btn.focus,
 button:focus,
 .paper-btn:focus,
 [type="button"]:focus {
@@ -1767,6 +1778,14 @@ a {
   background-repeat: repeat-x;
   background-size: 4px 3px; */
   text-decoration: none;
+}
+a:visited {
+  /* color: #41403e;
+  color: var(--primary); */
+  text-decoration: none;
+}
+
+a:not(.paper-btn) {
   position: relative;
   background-image: linear-gradient(
     90deg,
@@ -1777,13 +1796,8 @@ a {
   background-size: 1px 2px;
   background-position: bottom;
 }
-a:visited {
-  /* color: #41403e;
-  color: var(--primary); */
-  text-decoration: none;
-}
 
-a.success {
+a:not(.paper-btn).success {
   background-image: linear-gradient(
     90deg,
     var(--success-text),
@@ -1791,7 +1805,7 @@ a.success {
   );
 }
 
-a.warning {
+a:not(.paper-btn).warning {
   background-image: linear-gradient(
     90deg,
     var(--warning-text),
@@ -1799,7 +1813,7 @@ a.warning {
   );
 }
 
-a.danger {
+a:not(.paper-btn).danger {
   background-image: linear-gradient(
     90deg,
     var(--danger-text),
@@ -1807,7 +1821,7 @@ a.danger {
   );
 }
 
-a::before {
+a:not(.paper-btn):before {
   content: "";
   background-color: var(--secondary-light);
   position: absolute;
@@ -1818,15 +1832,15 @@ a::before {
   z-index: -1;
 }
 
-a.success::before {
+a:not(.paper-btn).success::before {
   background-color: var(--success-light);
 }
 
-a.warning::before {
+a:not(.paper-btn).warning::before {
   background-color: var(--warning-light);
 }
 
-a.danger::before {
+a:not(.paper-btn).danger::before {
   background-color: var(--danger-light);
 }
 

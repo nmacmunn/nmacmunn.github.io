@@ -28,41 +28,29 @@
   <body>
     <div class="container">
       <div class="row margin-top" style="position: fixed; z-index: 1">
-        <button
-          id="portfolio-btn"
-          class="margin-small"
-          onclick="scrollToElement('portfolio')"
-        >
+        <a id="portfolio-btn" class="paper-btn margin-small" href="#portfolio">
           Portfolio
-        </button>
-        <button
-          id="resume-btn"
-          class="margin-small"
-          onclick="scrollToElement('resume')"
-        >
+        </a>
+        <a id="resume-btn" class="paper-btn margin-small" href="#resume">
           Resume
-        </button>
-        <button
-          id="about-btn"
-          class="margin-small"
-          onclick="scrollToElement('about')"
-        >
+        </a>
+        <a id="about-btn" class="paper-btn margin-small" href="#about">
           About
-        </button>
-        <button
-          id="hire-btn"
-          class="margin-small"
-          onclick="scrollToElement('hire')"
-        >
-          Hire
-        </button>
+        </a>
+        <a id="hire-btn" class="paper-btn margin-small" href="#hire"> Hire </a>
+      </div>
+      <div
+        class="row flex-center"
+        style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1"
+      >
+        <a id="top-btn" class="margin" href="#top"> Top </a>
       </div>
       <section id="top">
         <h3>Hello!</h3>
         <p>
           I'm <b>Neil</b>, a software developer currently based in Asheville,
-          North Carolina. I mostly build web apps and productivity tools using
-          TypeScript.
+          North Carolina. I mostly build web apps and productivity tools for
+          companies like Bloomberg, ModernAdvisor, and Gumstix.
         </p>
         <p>
           I care a lot about delivering simple, beautiful, and maintainable
@@ -180,7 +168,7 @@
         </div>
       </section>
       <section id="hire">
-        <form id="hello" class="paper">
+        <form id="hello-form" class="paper">
           <p>Hey Neil,</p>
           <p>
             My name is
@@ -238,57 +226,5 @@
       </section>
     </div>
   </body>
-  <script>
-    var form = document.getElementById("hello");
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const n = "neil";
-      const m = "macmunn";
-      const s = "Hello";
-      const formData = new FormData(form);
-      const name = formData.get("name");
-      const description = formData.get("description");
-      const budget = formData.get("budget");
-      const timeframe = formData.get("timeframe");
-      const email = formData.get("email");
-      const b = encodeURIComponent(`Hi Neil, 
-
-My name is ${name} and I'm looking for help with ${description}. 
-
-I have a budget of $${budget} and a timeframe of ${timeframe} weeks.
-
-You can email me at ${email}.
-`);
-      const url = `mailto:${n}@${m}.com?subject=${s}&body=${b}`;
-      window.open(url, "_blank");
-      form.reset();
-    });
-
-    var observer = new IntersectionObserver(onIntersection, {
-      root: null, // default is the viewport
-      threshold: 0.8, // percentage of target's visible area
-    });
-
-    // callback is called on intersection change
-    function onIntersection(entries, opts) {
-      entries.forEach((entry) => {
-        entry.target.classList.toggle("visible", entry.isIntersecting);
-        const btn = document.getElementById(`${entry.target.id}-btn`);
-        if (btn) {
-          btn.blur();
-          btn.classList.toggle("focus", entry.isIntersecting);
-        }
-      });
-    }
-
-    // Use the observer to observe an element
-    const sections = Array.from(document.getElementsByTagName("section"));
-    sections.forEach((element) => {
-      observer.observe(element);
-    });
-
-    function scrollToElement(id) {
-      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
-    }
-  </script>
+  <script src="main.js"></script>
 </html>
