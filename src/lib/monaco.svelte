@@ -1,27 +1,66 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type * as monaco from "monaco-editor";
+  import { onMount } from "svelte";
   import InitMonaco from "./init-monaco.svelte";
 
+  export let actions: monaco.editor.IActionDescriptor[] = [];
+  export let error: string = "";
+  export let language: "sql" | "typescript" = "typescript";
   export let lineNumbers: "on" | "off" = "on";
+  export let maxHeight = 1000;
   export let model: monaco.editor.ITextModel | null = null;
   export let readOnly = false;
   export let value: string | undefined = undefined;
 
+  let disposables: monaco.IDisposable[] = [];
   let divEl: HTMLDivElement;
-  let editor: monaco.editor.ICodeEditor | undefined;
+  let editor: monaco.editor.IStandaloneCodeEditor | undefined;
+  let showPlaceholder = true;
+
+  export async function focus() {
+    if (!editor) {
+      return;
+    }
+    editor.focus();
+    if (!model) {
+      return;
+    }
+    const { endColumn, endLineNumber } = model.getFullModelRange();
+    editor.setPosition({ column: endColumn, lineNumber: endLineNumber });
+  }
 
   $: if (model) {
     editor?.setModel(model);
     // force
     model.setValue(model.getValue());
+    if (error) {
+      const range = model.getFullModelRange();
+      editor?.createDecorationsCollection([
+        {
+          range,
+          options: {
+            hoverMessage: {
+              value: error
+            },
+            className: "squiggly-error"
+          }
+        }
+      ]);
+    }
+  }
+
+  $: if (editor) {
+    for (const action of actions) {
+      const disposable = editor.addAction(action);
+      disposables.push(disposable);
+    }
   }
 
   function resizeEditor() {
     if (!editor) {
       return;
     }
-    const height = Math.min(1000, editor.getContentHeight());
+    const height = Math.min(maxHeight, editor.getContentHeight());
     divEl.style.height = `${height}px`;
     const { width } = divEl.getBoundingClientRect();
     editor.layout({ width, height });
@@ -32,22 +71,32 @@
     const isLarge = document.body.clientWidth >= 640;
     editor = monaco.editor.create(divEl, {
       fontSize: isLarge ? 14 : 12,
-      language: "typescript",
+      language,
       lineNumbers,
       minimap: {
         enabled: false
       },
       overviewRulerLanes: 0,
       readOnly,
+      renderLineHighlight: "none",
       scrollBeyondLastLine: false,
-      value
+      scrollbar: {
+        vertical: "visible"
+      },
+      value,
+      wordWrap: "on"
     });
-    const listener = editor.onDidContentSizeChange(resizeEditor);
+
+    disposables = [
+      editor,
+      editor.onDidContentSizeChange(resizeEditor),
+      editor.onDidBlurEditorWidget(() => (showPlaceholder = true)),
+      editor.onDidFocusEditorText(() => (showPlaceholder = false))
+    ];
+
     resizeEditor();
-    return () => {
-      listener.dispose();
-      editor?.dispose();
-    };
+
+    return () => disposables.forEach((d) => d.dispose());
   });
 </script>
 

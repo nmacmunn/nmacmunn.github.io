@@ -1,7 +1,8 @@
 <script lang="ts">
   import Diff from "$lib/diff.svelte";
-  import Repl from "$lib/repl.svelte";
+  import Repl from "$lib/ts-repl.svelte";
   import Snippet from "$lib/snippet.svelte";
+  import Article from "../../../lib/article.svelte";
   import error from "./examples/error?raw";
   import ex1 from "./examples/ex1.ts?raw";
   import ex2 from "./examples/ex2.ts?raw";
@@ -27,6 +28,9 @@
   import voteReturn from "./examples/vote-return?raw";
   import voteTryCatch from "./examples/vote-try-catch?raw";
   import vote from "./examples/vote?raw";
+
+  const title = "TypeScripting Try-Catch";
+  const date = new Date("February 25, 2023");
 
   const sn1 = `type Why = { type: "UserError"; message: string } | { type: "DevError" };`;
   const sn2 = `function getPerson(quit: Quit<Why>, name: string): Person`;
@@ -77,17 +81,14 @@ quit({ type: "DevError" })`;
   />
 </svelte:head>
 
-<article class="article container container-sm padding-bottom-large">
-  <h1 class="article-title">TypeScripting Try-Catch</h1>
-  <p class="article-meta">Feb. 25, 2023</p>
-
-  <p class="text-lead">
-    tl;dr: <a
+<Article {title} {date}>
+  <svelte:fragment slot="tldr"
+    ><a
       href="https://github.com/nmacmunn/notry"
       target="_blank"
       rel="noreferrer">notry-ts</a
     > is a type safe error handling alternative to try-catch
-  </p>
+  </svelte:fragment>
 
   <p>
     Suppose you're asked to write a new function to determine whether a person
@@ -571,4 +572,4 @@ quit({ type: "DevError" })`;
       TypeScript / Implement Rust-style Result
     </a>
   </div>
-</article>
+</Article>

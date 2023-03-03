@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.e53eb730.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.0bb3e889.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.35744c98.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.b517a9ee.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.ef882da5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.57554042.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-sqlite-repl-page.svelte.2ab4914e.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.43676c1c.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/sqlite-repl.53badd3b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/monaco.364d91ab.mjs"><title>A browser-based SQLite REPL</title><!-- HEAD_svelte-1law5hj_START --><meta name="description" content=""><!-- HEAD_svelte-1law5hj_END -->
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main>
+
+<article class="article container container-sm padding-bottom-large"><h1 class="article-title">A browser-based SQLite REPL</h1>
+  <p class="article-meta">Mar 1, 2023</p>
+  <p class="text-lead">tl;dr: SQLite is awesome.</p>
+
+  <h3>SQLite is awesome.</h3>
+
+  <p>I generally choose the simplest solution to a problem until it I run into
+    its limits. At that point I can evaluate more advanced options from a better
+    vantage.
+  </p>
+
+  <p>I&#39;ve been using Firebase a lot in the past few years. I have a handful of
+    live projects using it that were simple to setup, require almost no
+    maintenance, and costs next to nothing. For authentication, Firebase is
+    still my absolute go-to.
+  </p>
+
+  <p>However, Firebase&#39;s storage options are limited and I knew I wanted
+    something more powerful when I built
+    <a href="https://venue.tube" target="_blank" rel="noreferrer">VenueTube
+    </a> which would be more data intensive.
+  </p>
+
+  <p>In the past I&#39;d used MySQL and MongoDB professionally but following the
+    principle of doing the simplest thing possible, I elected to use SQLite.
+    There are a few things I haven&#39;t ironed out yet but overall I&#39;d call it a
+    smashing success.
+  </p>
+
+  <h3>WebAssembly is awesome, too.</h3>
+
+  <p>One technology that I&#39;m super excited about right now is WebAssembly. Years
+    ago I decided to trade the power and control of C for the ubiquity of
+    JavaScript. For the most part it has felt like the right decision and my
+    background in C served as a solid foundation for work on the web.
+  </p>
+
+  <p>That said, amidst a background of bloated web applications with huge
+    dependency graphs, the arrival of Wasm has been a breath of fresh air. I&#39;m
+    sure I&#39;ve encountered many web apps using Wasm under the hood but the first
+    project to really grab my attention was <a href="https://swc.rs/" target="_blank" rel="noreferrer">SWC</a> a Rust-based web transpiler that compiles to Wasm.
+  </p>
+
+  <p>Working on developer tools at Bloomberg we were super excited about SWC. I
+    put it to use to build the browser-only Typescript REPL in my <a href="/posts/notry" target="_blank" rel="noreferrer">notry-ts post</a></p>
+
+  <h3>Putting them together</h3>
+
+  <p>Not only is SQLite already precompiled to Wasm but there are a handful of
+    demos included showing how to use it. So let&#39;s get cracking.
+  </p>
+
+  <p>First we need to grab the WebAssembly &amp; JavaScript archive from <a href="https://sqlite.org/download.html" target="_blank" rel="noreferrer">here</a>.
+  </p>
+
+  <div class="card margin-bottom-large">
+  <div class="padding-top padding-bottom">
+
+
+<div></div></div>
+  <div class="card-footer"><div style="display: flex;"><div style="flex: 1;"><div class="text-muted"><small>SQLite version: <br>
+            Stored: 0B
+          </small></div></div>
+      <div><button class="btn-small">Run</button>
+        <button class="btn-small">Reset</button></div></div></div></div>
+
+  <p>A bunch of different sql databases including two implementations of sqlite
+    in the browser:
+    <a href="http://sqlfiddle.com/">http://sqlfiddle.com/ </a></p>
+
+  <p>Build on sql.js:
+    <a href="https://sql.js.org/examples/GUI/index.html">https://sql.js.org/examples/GUI/index.html
+    </a></p></article></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_19kfjap = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.0bb3e889.mjs"),
+						import("../_app/immutable/entry/app.ef882da5.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_19kfjap.element, {
+							node_ids: [0, 4],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
