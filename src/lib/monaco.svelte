@@ -1,84 +1,63 @@
 <script lang="ts">
-  import type * as monaco from "monaco-editor";
+  import type { editor, Range } from "monaco-editor";
   import { onMount } from "svelte";
   import InitMonaco from "./init-monaco.svelte";
 
-  export let actions: monaco.editor.IActionDescriptor[] = [];
+  export let actions: editor.IActionDescriptor[] = [];
+  export let autofocus = false;
   export let error: string = "";
-  export let language: "sql" | "typescript" = "typescript";
+  export let errorOn: string = "";
+  export let language: "html" | "sql" | "typescript" = "typescript";
   export let lineNumbers: "on" | "off" = "on";
-  export let maxHeight = 1000;
-  export let model: monaco.editor.ITextModel | null = null;
+  export let maxHeight: number | undefined = undefined;
+  export let model: editor.ITextModel | undefined = undefined;
   export let readOnly = false;
+  export let renderValidationDecorations: "on" | undefined = undefined;
   export let value: string | undefined = undefined;
 
-  let disposables: monaco.IDisposable[] = [];
+  export const focus = () => setFocus();
+
   let divEl: HTMLDivElement;
-  let editor: monaco.editor.IStandaloneCodeEditor | undefined;
-  let showPlaceholder = true;
+  let resizeEditor = () => {};
+  let setActions = (actions: editor.IActionDescriptor[]) => {};
+  let setFocus = () => {};
+  let setMarkers: (
+    model: editor.ITextModel,
+    message: string,
+    range: Range
+  ) => void;
+  let setModel: (model: editor.ITextModel) => void = () => {};
 
-  export async function focus() {
-    if (!editor) {
-      return;
-    }
-    editor.focus();
-    if (!model) {
-      return;
-    }
-    const { endColumn, endLineNumber } = model.getFullModelRange();
-    editor.setPosition({ column: endColumn, lineNumber: endLineNumber });
-  }
+  $: setActions(actions);
 
-  $: if (model) {
-    editor?.setModel(model);
-    // force
-    model.setValue(model.getValue());
-    if (error) {
-      const range = model.getFullModelRange();
-      editor?.createDecorationsCollection([
-        {
-          range,
-          options: {
-            hoverMessage: {
-              value: error
-            },
-            className: "squiggly-error"
-          }
-        }
-      ]);
+  $: if (model) setModel(model);
+  // show error
+  $: if (error && model) {
+    let range = model.getFullModelRange();
+    if (errorOn) {
+      const f = false;
+      const [match] = model.findMatches(errorOn, true, f, f, null, f);
+      if (match) {
+        range = match.range;
+      }
     }
-  }
-
-  $: if (editor) {
-    for (const action of actions) {
-      const disposable = editor.addAction(action);
-      disposables.push(disposable);
-    }
-  }
-
-  function resizeEditor() {
-    if (!editor) {
-      return;
-    }
-    const height = Math.min(maxHeight, editor.getContentHeight());
-    divEl.style.height = `${height}px`;
-    const { width } = divEl.getBoundingClientRect();
-    editor.layout({ width, height });
+    setMarkers(model, error, range);
   }
 
   onMount(async () => {
     const monaco = await import("monaco-editor");
-    const isLarge = document.body.clientWidth >= 640;
-    editor = monaco.editor.create(divEl, {
-      fontSize: isLarge ? 14 : 12,
+    const editor = monaco.editor.create(divEl, {
+      fontSize: document.body.clientWidth >= 640 ? 14 : 12,
       language,
       lineNumbers,
       minimap: {
         enabled: false
       },
+      model,
       overviewRulerLanes: 0,
       readOnly,
       renderLineHighlight: "none",
+      renderValidationDecorations,
       scrollBeyondLastLine: false,
       scrollbar: {
         vertical: "visible"
@@ -87,14 +66,40 @@
       wordWrap: "on"
     });
 
-    disposables = [
-      editor,
-      editor.onDidContentSizeChange(resizeEditor),
-      editor.onDidBlurEditorWidget(() => (showPlaceholder = true)),
-      editor.onDidFocusEditorText(() => (showPlaceholder = false))
-    ];
+    model = model || editor.getModel() || undefined;
 
-    resizeEditor();
+    resizeEditor = () => {
+      const max = maxHeight || document.body.clientHeight / 2;
+      const height = Math.min(max, editor.getContentHeight());
+      const { width } = divEl.getBoundingClientRect();
+      divEl.style.height = `${height}px`;
+      editor.layout({ width, height });
+    };
+
+    setFocus = () => editor.focus();
+
+    if (autofocus) editor.focus();
+
+    setMarkers = (model, message, range) => {
+      const severity = monaco.MarkerSeverity.Error;
+      const marker = { message, severity, ...range };
+      monaco.editor.setModelMarkers(model, "", [marker]);
+    };
+
+    setModel = (model: editor.ITextModel) => {
+      model.setValue(model.getValue());
+      editor.setModel(model);
+      const range = model.getFullModelRange();
+      const { endColumn: column, endLineNumber: lineNumber } = range;
+      editor.revealLine(lineNumber);
+      editor.setPosition({ column, lineNumber });
+    };
+
+    const disposables = [editor, editor.onDidContentSizeChange(resizeEditor)];
+
+    setActions = (actions) => {
+      disposables.push(...actions.map((action) => editor.addAction(action)));
+    };
 
     return () => disposables.forEach((d) => d.dispose());
   });

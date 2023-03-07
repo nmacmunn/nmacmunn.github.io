@@ -13,12 +13,13 @@
     if (movingTo && movingTo !== current) {
       return;
     }
-    if (current === "top") {
-      const { origin, pathname } = location;
-      history.replaceState(undefined, "", origin + pathname);
-    } else {
-      window.location.hash = current;
-    }
+    // BREAKS THE BACK BUTTON!
+    // if (current === "top") {
+    //   const { origin, pathname } = location;
+    //   history.replaceState(undefined, "", origin + pathname);
+    // } else {
+    //   window.location.hash = current;
+    // }
     movingTo = undefined;
     active = current;
   }
@@ -45,38 +46,16 @@
 
 <div class="container">
   <div class="row margin-top" style="position: fixed; z-index: 1">
-    <a
-      class="paper-btn margin-small"
-      class:focus={active === "projects"}
-      href="#projects"
-      on:click={() => (active = movingTo = "projects")}
-    >
-      Projects
-    </a>
-    <a
-      class="paper-btn margin-small"
-      class:focus={active === "background"}
-      href="#background"
-      on:click={() => (active = movingTo = "background")}
-    >
-      Background
-    </a>
-    <a
-      class="paper-btn margin-small"
-      class:focus={active === "links"}
-      href="#links"
-      on:click={() => (active = movingTo = "links")}
-    >
-      Links
-    </a>
-    <a
-      class="paper-btn margin-small"
-      class:focus={active === "posts"}
-      href="#posts"
-      on:click={() => (active = movingTo = "posts")}
-    >
-      Posts
-    </a>
+    {#each ["Projects", "Background", "Links", "Posts"] as section}
+      <a
+        class="paper-btn margin-small"
+        class:focus={active === section.toLowerCase()}
+        href="#{section.toLowerCase()}"
+        on:click={() => (active = movingTo = section.toLowerCase())}
+      >
+        {section}
+      </a>
+    {/each}
   </div>
   <div
     class="row flex-center"
@@ -106,6 +85,15 @@
   </section>
   <section id="projects" class:visible={active === "projects"}>
     <div class="row">
+      <div class="col sm-6 md-4">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">SQLite Playground</h4>
+            <p class="card-text">Interactive SQLite in the browser</p>
+            <a class="card-link" href="/sqlite">Demo</a>
+          </div>
+        </div>
+      </div>
       <div class="col sm-6 md-4">
         <div class="card">
           <div class="card-body">
@@ -272,13 +260,17 @@
       <a href="/posts/notry">TypeScripting Try-Catch</a>: exploring type safe
       alternatives to try-catch
     </p>
+    <p>
+      <a href="/posts/sqlite-repl">Building a SQLite Playground</a>: how to
+      build a SQLite REPL that runs entirely in the browser
+    </p>
   </section>
 </div>
 
 <style>
   section {
     min-height: 100vh;
-    scroll-snap-align: start;
+    /* scroll-snap-align: start; */
     display: flex;
     flex-direction: column;
     justify-content: center;

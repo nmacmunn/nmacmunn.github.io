@@ -1,21 +1,56 @@
-<script>
+<script lang="ts">
   import Snippet from "$lib/snippet.svelte";
   import SqliteRepl from "$lib/sqlite-repl.svelte";
+
+  const cheats = [
+    {
+      label: "Query table names",
+      code: `SELECT name FROM sqlite_schema WHERE type='table';`
+    },
+    {
+      label: "Create a table",
+      code: `CREATE TABLE users(
+  id INTEGER PRIMARY KEY, 
+  email TEXT UNIQUE NOT NULL
+);`
+    },
+    {
+      label: "Insert a row",
+      code: `INSERT INTO users(email)
+  VALUES('neil@example.com');`
+    },
+    {
+      label: "Query a table",
+      code: `SELECT * FROM users WHERE email = 'neil@example.com';`
+    },
+    {
+      label: "Delete a row",
+      code: `DELETE FROM users WHERE id = 1;`
+    }
+  ];
 </script>
 
+<svelte:head>
+  <title>SQLite Playground</title>
+  <meta
+    name="description"
+    content="An interactive SQLite database right in your browser."
+  />
+</svelte:head>
+
 <div class="container container-sm padding-bottom-large">
-  <h2>SQLite REPL</h2>
+  <h2>SQLite Playground</h2>
 
   <p class="padding-small background-secondary text-center">
     <small>
       <a href="/posts/sqlite-repl">
-        Learn how SQLite is running and storing data in the browser
+        Learn how SQLite runs and stores data in the browser
       </a>
     </small>
   </p>
 
   <div class="padding-bottom-large">
-    <SqliteRepl />
+    <SqliteRepl autofocus={true} />
   </div>
 
   <h5 style:text-decoration="underline">Shortcuts</h5>
@@ -38,36 +73,10 @@
   <h5 style:text-decoration="underline">Cheatsheet</h5>
 
   <div class="padding-left padding-right padding-bottom">
-    <h6 class="text-muted">Query table names</h6>
-    <Snippet
-      language="sql"
-      value={`SELECT name FROM sqlite_schema WHERE type='table';`}
-    />
-
-    <h6 class="text-muted">Create a table</h6>
-    <Snippet
-      language="sql"
-      value={`CREATE TABLE users(
-    id INTEGER PRIMARY KEY, 
-    email TEXT UNIQUE NOT NULL
-  );`}
-    />
-
-    <h6 class="text-muted">Insert a row</h6>
-    <Snippet
-      language="sql"
-      value={`INSERT INTO users(email)
-    VALUES('neil@example.com');`}
-    />
-
-    <h6 class="text-muted">Query a table</h6>
-    <Snippet
-      language="sql"
-      value={`SELECT * FROM users WHERE email = 'neil@example.com';`}
-    />
-
-    <h6 class="text-muted">Delete a row</h6>
-    <Snippet language="sql" value={`DELETE FROM users WHERE id = 1;`} />
+    {#each cheats as cheat}
+      <h6 class="text-muted">{cheat.label}</h6>
+      <Snippet language="sql" value={cheat.code} />
+    {/each}
   </div>
 </div>
 

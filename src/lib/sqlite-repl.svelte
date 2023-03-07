@@ -1,149 +1,125 @@
-<script context="module" lang="ts">
-  let sqlite3: {
-    capi: {
-      sqlite3_js_kvvfs_clear(): void;
-      sqlite3_js_kvvfs_size(): number;
-    };
-    oo1: {
-      DB: any;
-    };
-    version: {
-      libVersion: string;
-    };
-  };
-  let sqliteInit = async () => {
-    const s = await import("$lib/sqlite3/sqlite3-bundler-friendly.mjs");
-    sqlite3 = await s.default();
-    sqliteInit = async () => {};
-  };
-</script>
-
 <script lang="ts">
-  import { onMount, tick } from "svelte";
-  import Monaco from "./monaco.svelte";
   import type * as monaco from "monaco-editor";
-  import {
-    decodeHistory,
-    downloadable,
-    presentable,
-    uriable,
-    type Result
-  } from "./util/result";
+  import { onMount } from "svelte";
+  import Monaco from "./monaco.svelte";
+  import * as Result from "./util/result";
+  import * as Sqlite from "./util/sqlite3";
+  import { clear, exec, size, version } from "./util/sqlite3";
+  import { notry, type Quit } from "notry-ts";
 
-  let actions: monaco.editor.IActionDescriptor[] = [];
+  export let autofocus = false;
+
+  const language = "sql";
+  const lineNumbers = "off";
+
   let activeModel: monaco.editor.ITextModel;
   let activeMonaco: Monaco;
-  let db: any;
   let error = "";
+  let errorOn = "";
   let historyModel: monaco.editor.ITextModel;
-  let results: Result[] = [];
-  let resultIndex = 0;
-  let size = 0;
-  let version = "";
+  let mounted = false;
+  let results: Result.Result[] = [];
 
-  function next() {
-    const newRI = resultIndex + 1;
-    if (newRI <= results.length) {
-      resultIndex = newRI;
+  // set resultIndex whenever results change
+  $: resultIndex = results.length;
+
+  // after the hash has been initially parse, start updating it with results
+  $: if (mounted) {
+    window.location.hash = Result.uriable(results);
+  }
+
+  /**
+   * Clear history
+   */
+  function clearResults() {
+    results = [];
+    activeMonaco.focus();
+  }
+
+  /**
+   * Navigate through query history
+   */
+  function navResult(by: number) {
+    return () => {
+      resultIndex = Math.max(0, Math.min(resultIndex + by, results.length));
       const { sql } = results[resultIndex] || { sql: "" };
       activeModel.setValue(sql);
+      activeModel = activeModel;
       activeMonaco.focus();
-    }
+    };
   }
 
-  function previous() {
-    const newRI = resultIndex - 1;
-    if (newRI >= 0) {
-      resultIndex = newRI;
-      activeModel.setValue(results[resultIndex].sql);
-      activeMonaco.focus();
-    }
-  }
-
-  function clear() {
-    results = [];
-    resultIndex = 0;
-    window.location.hash = "";
+  /**
+   * Clear data from local storage
+   */
+  async function resetDb() {
+    $clear();
     activeMonaco.focus();
   }
 
-  function download() {
-    const filename = `${Math.floor(Date.now() / 1000)}.sql`;
-    const a = document.createElement("a");
-    a.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + downloadable(results)
-    );
-    a.setAttribute("download", filename);
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  function reset() {
-    sqlite3.capi.sqlite3_js_kvvfs_clear();
-    size = 0;
-    activeMonaco.focus();
-  }
-
+  /**
+   * Run the query in the active editor
+   */
   function run() {
-    const sql = activeModel.getValue();
+    const input = activeModel.getValue();
+    const queries = Sqlite.getQueries(input);
     error = "";
-    try {
-      const rows = db.exec({
-        sql,
-        returnValue: "resultRows",
-        rowMode: "object"
+    while (queries.length) {
+      const sql = queries[0];
+      const did = notry((quit: Quit<{ sql: string }>) => {
+        const start = performance.now();
+        const rows = quit.catch($exec, sql, { rowMode: "object" }, { sql });
+        const time = performance.now() - start;
+        return { sql, rows, time };
       });
-      results = [...results, { sql, rows }];
-      resultIndex = results.length;
-      size = sqlite3.capi.sqlite3_js_kvvfs_size();
-      window.location.hash = uriable(results);
-      historyModel.setValue(presentable(results));
-      activeModel.setValue("");
-    } catch (e) {
-      error = `${e}`;
-      console.error(e);
-    } finally {
-      activeMonaco.focus();
+      if (!did.ok) {
+        error = `${did.exception}`;
+        errorOn = did.n.sql;
+        break;
+      }
+      results = [...results, did.y];
+      queries.shift();
     }
+
+    historyModel.setValue(Result.presentable(results));
+    historyModel = historyModel;
+
+    activeModel.setValue(queries.join("\n"));
+    activeModel = activeModel;
+    activeMonaco.focus();
   }
 
   onMount(async () => {
-    const monaco = await import("monaco-editor");
     if (window.location.hash) {
-      results = decodeHistory(window.location.hash.substring(1));
-      resultIndex = results.length;
+      results = Result.decodeHistory(window.location.hash.substring(1));
     }
-    historyModel = monaco.editor.createModel(presentable(results), "sql");
+    const monaco = await import("monaco-editor");
+    const history = Result.presentable(results);
+    historyModel = monaco.editor.createModel(history, "sql");
     activeModel = monaco.editor.createModel("", "sql");
-    actions = [
-      {
-        id: "run",
-        label: "Run",
-        keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
-        run
-      },
-      {
-        id: "prev",
-        label: "Previous",
-        keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.UpArrow],
-        run: previous
-      },
-      {
-        id: "next",
-        label: "Next",
-        keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.DownArrow],
-        run: next
-      }
-    ];
-    await sqliteInit();
-    version = sqlite3.version.libVersion;
-    db = new sqlite3.oo1.DB({ filename: ":localStorage:", flags: "ct" });
-    size = sqlite3.capi.sqlite3_js_kvvfs_size();
-    tick().then(() => activeMonaco.focus());
-    return () => db.close();
+    activeMonaco.$set({
+      actions: [
+        {
+          id: "run",
+          keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
+          label: "Run",
+          run
+        },
+        {
+          id: "next",
+          keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.DownArrow],
+          label: "Next",
+          run: navResult(1)
+        },
+        {
+          id: "previous",
+          keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.UpArrow],
+          label: "Previous",
+          run: navResult(-1)
+        }
+      ]
+    });
+    mounted = true;
   });
 </script>
 
@@ -155,46 +131,49 @@
     >
       <div class="text-right margin-right">
         <a
-          href={""}
           class="margin-right-small"
-          on:click|preventDefault={download}><small>Download</small></a
+          download="repl.sql"
+          href="data:text/plain;charset=utf-8,{Result.downloadable(results)}"
         >
-        <a href={""} on:click|preventDefault={clear}
-          ><small>Clear history</small></a
-        >
+          <small>Download SQL</small>
+        </a>
+        <a href={""} on:click|preventDefault={clearResults}>
+          <small>Clear history</small>
+        </a>
       </div>
-      <Monaco
-        language="sql"
-        lineNumbers={"off"}
-        maxHeight={600}
-        model={historyModel}
-        readOnly={true}
-      />
+      <Monaco {language} {lineNumbers} model={historyModel} readOnly={true} />
     </div>
   {/if}
   <div class="padding-top padding-bottom">
     <Monaco
       bind:this={activeMonaco}
-      {actions}
+      {autofocus}
       {error}
-      language="sql"
-      lineNumbers={"off"}
+      {errorOn}
+      {language}
+      {lineNumbers}
       model={activeModel}
     />
   </div>
   <div class="card-footer">
     <div style:display="flex">
-      <div style:flex={1}>
-        <div class="text-muted">
-          <small>
-            SQLite version: {version}<br />
-            Stored: {size}B
-          </small>
-        </div>
+      <div style:flex={1} class="margin-right-small">
+        {#if error}
+          <div class="text-danger">
+            <small>{error}</small>
+          </div>
+        {:else}
+          <div class="text-muted">
+            <small>
+              SQLite version: {$version}<br />
+              Stored: {$size}B
+            </small>
+          </div>
+        {/if}
       </div>
       <div>
         <button class="btn-small" on:click={run}>Run</button>
-        <button class="btn-small" on:click={reset}>Reset</button>
+        <button class="btn-small" on:click={resetDb}>Reset</button>
       </div>
     </div>
   </div>

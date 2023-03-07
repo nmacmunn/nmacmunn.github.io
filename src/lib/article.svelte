@@ -9,9 +9,10 @@
     {date.toLocaleDateString(undefined, { dateStyle: "medium" })}
   </p>
   {#if $$slots.tldr}
-    <p class="text-lead">
-      tl;dr: <slot name="tldr" />
-    </p>
+    <div class="text-lead row">
+      <div class="margin-right">tl;dr:</div>
+      <div class="col-fill"><slot name="tldr" /></div>
+    </div>
   {/if}
 
   <slot />
