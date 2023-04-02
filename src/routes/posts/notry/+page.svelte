@@ -74,7 +74,7 @@ quit({ type: "DevError" })`;
 </script>
 
 <svelte:head>
-  <title>TypeScripting Try-Catch</title>
+  <title>{title}</title>
   <meta
     name="description"
     content="An exploration of type safe error-handling alternatives to try-catch in TypeScript."
@@ -403,7 +403,7 @@ quit({ type: "DevError" })`;
   <h4>try-catch</h4>
 
   <p>
-    Let's introduce a utility <code>safe</code> to catch arbitary exceptions and
+    Let's introduce a utility <code>safe</code> to catch arbitrary exceptions and
     throw something specific.
   </p>
 

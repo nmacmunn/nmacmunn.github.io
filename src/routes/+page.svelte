@@ -46,7 +46,7 @@
 
 <div class="container">
   <div class="row margin-top" style="position: fixed; z-index: 1">
-    {#each ["Projects", "Background", "Links", "Posts"] as section}
+    {#each ["Projects", "Background", "Posts", "Links"] as section}
       <a
         class="paper-btn margin-small"
         class:focus={active === section.toLowerCase()}
@@ -192,9 +192,23 @@
       >.
     </p>
   </section>
+  <section id="posts" class:visible={active === "posts"}>
+    <p>
+      <a href="/posts/uni-testing">Uni-testing 101</a>: getting 100% code
+      coverage with a single Playwright test
+    </p>
+    <p>
+      <a href="/posts/sqlite-repl">Building a SQLite Playground</a>: how to
+      build a SQLite REPL that runs entirely in the browser
+    </p>
+    <p>
+      <a href="/posts/notry">TypeScripting Try-Catch</a>: exploring type safe
+      alternatives to try-catch
+    </p>
+  </section>
   <section id="links" class:visible={active === "links"}>
     <div>
-      <h4>Toolbox</h4>
+      <h4>Tools</h4>
       <p>
         <a
           href="https://www.typescriptlang.org/"
@@ -208,10 +222,11 @@
         >: web development, streamlined
       </p>
       <p>
-        <a href="https://jestjs.io/" target="_blank" rel="noreferrer">Jest</a>:
-        Delightful JavaScript testing
+        <a href="https://playwright.dev/" target="_blank" rel="noreferrer"
+          >Playwright</a
+        >: Web Testing and Automation framework
       </p>
-      <h4>Learning</h4>
+      <h4>Studies</h4>
       <p>
         <a
           href="https://webassembly.org/"
@@ -254,16 +269,6 @@
         >: Experimental science masterclass
       </p>
     </div>
-  </section>
-  <section id="posts" class:visible={active === "posts"}>
-    <p>
-      <a href="/posts/notry">TypeScripting Try-Catch</a>: exploring type safe
-      alternatives to try-catch
-    </p>
-    <p>
-      <a href="/posts/sqlite-repl">Building a SQLite Playground</a>: how to
-      build a SQLite REPL that runs entirely in the browser
-    </p>
   </section>
 </div>
 

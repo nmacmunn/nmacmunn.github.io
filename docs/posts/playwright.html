@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.914c2b14.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.eb35335e.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.5515f438.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.4022a302.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.05787cfe.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.d299b5c7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.fad42ce9.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.43ab45b9.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-playwright-page.svelte.54e04bea.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/section.a90d947a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.eff7007e.mjs">
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+<h3>How It Works</h3>
+
+<p>I wanted to be able to build my test gradually and watch the coverage change
+    in realtime. The Playwright Library made this pretty easy.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h5>codegen</h5>
+
+  <p>Playwright has an awesome feature called <b>codegen</b> that records interactions
+    with your application and writes out a test that you can replay. You can even
+    start it programmatically.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>My plan was to insert <code>await page.pause()</code> at the end of the test
+    so I could incrementally add and test a few steps at a time.
+  </p>
+
+  <h5>Getting coverage</h5>
+
+  <p>I knew that V8 had native support for JavaScript code coverage and
+    thankfully Playwright already supported commands to obtain it.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>Unfortunately, to get the coverage in realtime in this way I&#39;d need to
+    continuously start and stop. I was afraid of losing coverage data during the
+    off intervals so I decided to take a different approach.
+  </p>
+
+  <h5>Then there was hacking</h5>
+
+  <p>Here&#39;s the function that gets called when <code>page.coverage.stopJSCoverage</code> is invoked.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>It sends four requests to Chromium, the first being <code>Profiler.takePreciseCoverage</code>
+    which is the one we&#39;re interested in. Armed with this knowledge, it was easy
+    to add a new method <code>page.coverage.takeJSCoverage</code> that would allow
+    me to get the coverage in realtime without disabling coverage.
+  </p>
+
+  <h5>Combining coverage</h5>
+
+  <p><code>Profile.takePreciseCoverage</code> resets V8&#39;s coverage counts so I needed
+    to keep track of the totals over time. It&#39;s not super interesting or challenging
+    but I thought worth mentioning.
+  </p>
+
+  <h5>Displaying Coverage</h5>
+
+  <p>I wanted to see the percent coverage for each file and the ability to dive
+    into the details of any particular file.
+  </p>
+
+  <h5>And then more hacking</h5>
+
+  <p>Another problem I ran into with coverage is that it needs to be enabled for
+    each page and captured before the page is closed. You could do this manually
+    but I wanted to make sure the test would work even without <code>page.coverage.takeCoverage</code>
+    so I monkey-patched <code>context.newPage</code> and
+    <code>page.close</code>
+    to ensure that I get coverage for the full lifecycle of the page.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>Also note the option <code>resetOnNavigation: false</code>. This is
+    important to be able to call <code>page.goto</code> in your test without losing
+    coverage data (although I could monkey-patch that too).
+  </p>
+
+  <h5>Sourcemaps</h5>
+
+  <p>This is the part where I learned way more about sourcemaps than I ever cared
+    to.
+  </p></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_12t4heb = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.eb35335e.mjs"),
+						import("../_app/immutable/entry/app.d299b5c7.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_12t4heb.element, {
+							node_ids: [0, 2, 5],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
