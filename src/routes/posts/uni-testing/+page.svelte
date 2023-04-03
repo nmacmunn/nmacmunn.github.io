@@ -9,6 +9,8 @@
 
   const date = new Date("April 3, 2023");
   const title = "Uni-Testing 101";
+  const description =
+    "Getting 100% code coverage with a single Playwright test";
 
   const history = `d8eb580 fix flaky test
 f744d31 fix flaky test
@@ -101,10 +103,18 @@ b6f8bfa fix flaky test
 
 <svelte:head>
   <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
   <meta
-    name="description"
-    content="Getting 100% code coverage with a single Playwright test"
+    property="og:url"
+    content="https://neil.macmunn.com/posts/uni-testing"
   />
+  <meta property="og:description" content={description} />
+  <meta
+    property="og:image"
+    content="https://neil.macmunn.com/playwright-process.png"
+  />
+  <meta property="og:type" content="article" />
 </svelte:head>
 
 <Article {title} {date}>
