@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
@@ -20,30 +24,31 @@
       gtag("js", new Date());
       gtag("config", "G-LYB09F73EQ");
     </script>
+
     <meta http-equiv="content-security-policy" content="">
-		<link href="../_app/immutable/assets/_layout.914c2b14.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/_layout.57e72e68.css" rel="stylesheet">
 		<link href="../_app/immutable/assets/_page.667d20ac.css" rel="stylesheet">
 		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.f638a06b.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.5515f438.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.fc865b37.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.05787cfe.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.74458b92.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.027769e7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.4711a160.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.3f09e398.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.da45b3b5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.95c43a76.mjs">
 		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.fad42ce9.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.1aef7c0a.mjs">
 		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
 		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.43ab45b9.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-notry-page.svelte.1faf5d8c.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.eff7007e.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.0e1de7b8.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-notry-page.svelte.fa5ddd9b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.3767b8a5.mjs">
 		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.d127ad6d.mjs">
-		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.dd93a272.mjs"><title>TypeScripting Try-Catch</title><!-- HEAD_svelte-76t75_START --><meta name="description" content="An exploration of type safe error-handling alternatives to try-catch in TypeScript."><!-- HEAD_svelte-76t75_END -->
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.06c607fb.mjs"><title>TypeScripting Try-Catch</title><!-- HEAD_svelte-76t75_START --><meta name="description" content="An exploration of type safe error-handling alternatives to try-catch in TypeScript."><!-- HEAD_svelte-76t75_END -->
   </head>
   <body data-sveltekit-preload-data="hover">
     <div style="display: contents">
 
 
-<div class="app"><main><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+<div class="app"><main class="svelte-1sdjs4s" style="filter: blur(25px);"><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
 
 
 <article class="article container container-sm padding-bottom-large"><h1 class="article-title">TypeScripting Try-Catch</h1>
@@ -502,7 +507,7 @@
 			
 			<script>
 				{
-					__sveltekit_1edc919 = {
+					__sveltekit_nstxwd = {
 						env: {},
 						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
 						element: document.currentScript.parentElement
@@ -511,10 +516,10 @@
 					const data = [null,null,null];
 
 					Promise.all([
-						import("../_app/immutable/entry/start.f638a06b.mjs"),
-						import("../_app/immutable/entry/app.74458b92.mjs")
+						import("../_app/immutable/entry/start.027769e7.mjs"),
+						import("../_app/immutable/entry/app.95c43a76.mjs")
 					]).then(([kit, app]) => {
-						kit.start(app, __sveltekit_1edc919.element, {
+						kit.start(app, __sveltekit_nstxwd.element, {
 							node_ids: [0, 2, 4],
 							data,
 							form: null,

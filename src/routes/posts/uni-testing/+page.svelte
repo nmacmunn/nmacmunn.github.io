@@ -673,7 +673,7 @@ b6f8bfa fix flaky test
   <Section title="Next Steps">
     <p>
       I'm certainly not advocating the use of a single test to provide all of
-      you quality assurance. That would be crazy... right?
+      your quality assurance. That would be crazy... right?
     </p>
 
     <p>Here are some of the next steps I'll take to shore up my QA program.</p>
@@ -694,9 +694,9 @@ b6f8bfa fix flaky test
     </SubSection>
     <SubSection title="Unit Testing">
       <p>
-        There are a lot of low-level functions that are only lightly exercised
-        here and could easily be unit tested. Complementing E2E tests with unit
-        tests focused on especially complex or sensitive operations.
+        Complementing E2E tests with unit tests focused on especially complex or
+        sensitive operations. Many low-level functions that are only lightly
+        exercised here would make great unit testing candidates.
       </p>
     </SubSection>
   </Section>
