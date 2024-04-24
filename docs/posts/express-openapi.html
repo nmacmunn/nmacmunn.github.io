@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.57e72e68.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/_page.3c43b6b2.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/resources.c759178c.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.21273dc2.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.4711a160.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.268a9c8a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.da45b3b5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.31671333.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.1aef7c0a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.0e1de7b8.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-express-openapi-page.svelte.a189b7d0.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/resources.cfbab304.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.06c607fb.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.e1d427ae.mjs"><!-- HEAD_svelte-19co01u_START --><title>Type-safe Express APIs</title>
+<meta name="description" content="Specification-driven development with OpenAPI and Express">
+<meta property="og:title" content="Type-safe Express APIs">
+<meta property="og:url" content="https://neil.macmunn.com/posts/express-openapi">
+<meta property="og:description" content="Specification-driven development with OpenAPI and Express">
+
+<meta property="og:type" content="article"><!-- HEAD_svelte-19co01u_END -->
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main class="svelte-1sdjs4s" style="filter: blur(25px);"><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+
+
+<article class="article container container-sm padding-bottom-large"><h1 class="article-title">Type-safe Express APIs</h1>
+  <p class="article-meta">May 27, 2024</p>
+  <div class="text-lead row"><div class="margin-right">tl;dr:</div>
+      <div class="col-fill">Making an Express API adhere to an OpenAPI specification
+  </div></div>
+
+  <h3></h3>
+
+<p>I was recently asked to provide API documentation for an unfamiliar
+      Express API. It might&#39;ve looked something like the ubiquitous pet store
+      example.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><a class=" svelte-ay64ok" href="https://www.openapis.org/" target="_blank" rel="noreferrer">OpenAPI</a> is a popular specification
+      for describing RESTful APIs that can be consumed by many tools to generate
+      documentation, client code, and server code.
+    </p>
+
+    <p>My first idea was to generate the API docs automatically from the code -
+      an approach I&#39;d used before with Python&#39;s <a class=" svelte-ay64ok" href="https://fastapi.tiangolo.com/" target="_blank" rel="noreferrer">FastAPI</a> framwework. Unfortunately, I wasn&#39;t able to find a tool that could generate
+      OpenAPI specs from Express application code.
+    </p>
+
+    <p>My next idea was to start with an OpenAPI specification and use it to
+      type-check the code as well as generate documentation.
+    </p>
+
+    
+
+  <h3>Specification-driven development</h3>
+
+<p>Regardless of whether you start with the code or the specification,
+      generating one from the other ensures that the two are always aligned and
+      streamlines development through centralized updates.
+    </p>
+
+    <p>Specification-driven development (i.e., starting with a specification and
+      generating the code), offers the advantage of being highly standardized
+      and language-agnostic. This makes it easier to get all stakeholders
+      involved earlier in the development process.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>This simple OpenApi specification, written in YAML, represents a pet store
+      API with a single endpoint for retrieving a pet by its ID, which is
+      provided in the url. The response is a JSON object with either the pet&#39;s
+      id and name, or an error message.
+    </p>
+
+    <p>With this specification, the API provider can implement it using the
+      language of their choosing and generate API documentation. The API
+      consumer can generate client code to using tools like <a class=" svelte-ay64ok" href="https://github.com/OpenAPITools/openapi-generator-cli" target="_blank" rel="noreferrer">openapi-generator-cli</a></p>
+
+  <h3>Generating TypeScript types</h3>
+
+<p>The npm package <a class=" svelte-ay64ok" href="https://openapi-ts.pages.dev/" target="_blank" rel="noreferrer">openapi-typescript</a> generates TypeScript types from an OpenAPI specification.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>Invoking this command with the sample specification yields a TypeScript
+      file with definitions for each request and response.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h3>Express Types</h3>
+
+<p>Let&#39;s take a closer look at the Express route definition.</p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>The second argument to <code>app.get</code> is an anonymous function with
+      the type
+      <code>RequestHandler</code>. Here&#39;s the definition provided by Express:
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><code>RequestHandler</code> has five generic types parameters.</p>
+
+    <div class="grid-table svelte-1jzueiw"><div class="svelte-1jzueiw">P</div>
+      <div class="svelte-1jzueiw">url path parameters</div>
+      <div class="svelte-1jzueiw">ResBody</div>
+      <div class="svelte-1jzueiw">the response body</div>
+      <div class="svelte-1jzueiw">ReqBody</div>
+      <div class="svelte-1jzueiw">the request body</div>
+      <div class="svelte-1jzueiw">ReqQuery</div>
+      <div class="svelte-1jzueiw">query string parameters</div>
+      <div class="svelte-1jzueiw">LocalData</div>
+      <div class="svelte-1jzueiw">local data attached to the response</div></div>
+
+    <p>Our goal is to combine our generated OpenAPI types and <code>RequestHandler</code> to produce something like this:
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><code>ShowPetByIdHandler</code> is a type of <code>RequestHandler</code>
+      that receives a single path parameter <code>petId</code> and returns an object
+      representing a pet, or an error.
+    </p>
+
+  <h3>OpenAPI types in Express</h3>
+
+<p>We don&#39;t want to manually specify those generic type parameters though,
+      they should come from the OpenAPI specification via <code>openapi-typescript</code>, giving us something like this:
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><b>OpenApiRequestHandler</b></p>
+
+    <p>Given an <code>Operation</code>, we can define the
+      <code>OpenApiRequestHandler</code> type.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><code>Locals</code> is the type of the local data attached to the response
+      object. Since it&#39;s unaffected by the API specification, it simply gets passed
+      through.
+    </p>
+
+    <p>Four intermediate types determine the path parameters, response body,
+      request body, and query parameters based on the <code>Operation</code>.
+      Let&#39;s look at each of these.
+    </p>
+
+    <p><b>OpenApiPathParams</b></p>
+
+    <p>Path parameters are defined in <code>Operation[&quot;parameters&quot;][&quot;path&quot;]</code>. The utility type <code>Property</code> is used two to extract the path parameters
+      type.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>So, <code>OpenApiPathParams</code> represents the type of
+      <code>Operation[&quot;parameters&quot;][&quot;path&quot;]</code> if it exists, or else
+      <code>undefined</code>.
+    </p>
+
+    <p><b>OpenApiQueryParams</b></p>
+
+    <p>Next, we&#39;ll jump to <code>OpenApiQueryParams</code>, since it&#39;s nearly the
+      same. The only differences are the property path and
+      <code>MapToString</code>.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>It&#39;s possible to specify query parameters as numbers or booleans, but
+      Express will always parse them as strings. <code>MapToString</code> is a utility
+      type that converts non-string property types to string types. We ignore array
+      and object parameters for the sake of simplicity.
+    </p>
+
+    <p><b>OpenApiRequestBody</b></p>
+
+    <p>Now let&#39;s look at the third intermediate type, <code>OpenApiRequestBody</code>.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>Using the <code>Property</code> utility type as before, we extract the
+      request body type from <code>Operation[&quot;requestBody&quot;][&quot;content&quot;]</code>.
+      This contains a map of MIME types. The
+      <code>Properties</code> utility type provides a union of the body types or
+      undefined if there are none.
+    </p>
+
+    <p><b>OpenApiResponseBody</b></p>
+
+    <p>The response body type has one more level of complexity; multiple
+      responses with different MIME types.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>The response body is defined for each response code and MIME type in <code>Operation[&quot;responses&quot;][responseCode][&quot;content&quot;][mimeType]</code>.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p><code>OpenApiResponseBody</code> extracts and collects response types by response
+      code and MIME type.
+    </p>
+
+  <h3>Type-checking the API</h3>
+
+<p>If you didn&#39;t follow all that it&#39;s ok! Here&#39;s the important part:
+      typechecking against the OpenAPI specification.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>Notice that apart from extracting the request handler and specifying it&#39;s
+      type, the responses have also changed. That&#39;s because the types didn&#39;t
+      match the API specification and the type checker caught it.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body"><img src="/request-handler-error.png" alt="Type error"></div></div>
+
+    <p>Here&#39;s the modified <code>showPetByIdHandler</code> type:
+    </p>
+
+  <h3>Testing</h3>
+
+<p>Finally, we can use the utility type <code>Equal</code> to verify that the
+      <code>RequestHandler</code> was derived correctly.
+    </p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h3>Moving Forward</h3>
+
+<p>We&#39;ve seen how to generate TypeScript types from an OpenAPI specification
+      and use them to type-check an Express API. This approach ensures that the
+      API documentation and code remain in sync as the API evolves.
+    </p>
+
+    <p>By adding a script to a projects <code>package.json</code>, it&#39;s easy to
+      rerun <code>openapi-typescript</code>
+      whenever the specification changes.
+    </p>
+
+  <h3>Conclusion</h3>
+
+<p>In terms of the original goal of generating API documentation, this
+      approach was quite successful. I started by taking a guess at the
+      specification, or generating one by using online tools and observing
+      requests and responses. The type-checker then guided me to the correct the
+      code or the specification until the two were in agreeance.
+    </p>
+
+    <p class="margin-large-bottom">One improvement that would be nice is a way to ensure the response code
+      corresponds with the body type.
+    </p>
+
+  <h3>Resources</h3>
+
+<div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">docs</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="warning svelte-ay64ok" href="https://www.openapis.org/" target="_blank" rel="noreferrer">OpenAPI Initiative</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://openapi-ts.pages.dev/" target="_blank" rel="noreferrer">OpenAPI TypeScript</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://openapi-generator-cli" target="_blank" rel="noreferrer">OpenAPI Generator CLI</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://medium.com/@angela.tt/the-easiest-and-quickest-way-to-generate-an-openapi-spec-for-an-existing-website-12b5ad6e36db" target="_blank" rel="noreferrer">The Easiest and Quickest Way to Generate an OpenAPI Spec for an Existing Website</a></div>
+    </div></article></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_9vwkc9 = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.21273dc2.mjs"),
+						import("../_app/immutable/entry/app.31671333.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_9vwkc9.element, {
+							node_ids: [0, 2, 4],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>

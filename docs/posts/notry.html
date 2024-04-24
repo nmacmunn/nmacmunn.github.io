@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.57e72e68.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/_page.667d20ac.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.21273dc2.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.4711a160.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.268a9c8a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.da45b3b5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.31671333.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.1aef7c0a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.0e1de7b8.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-notry-page.svelte.c11335c2.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.e1d427ae.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.1d147107.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.06c607fb.mjs"><title>TypeScripting Try-Catch</title><!-- HEAD_svelte-76t75_START --><meta name="description" content="An exploration of type safe error-handling alternatives to try-catch in TypeScript."><!-- HEAD_svelte-76t75_END -->
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main class="svelte-1sdjs4s" style="filter: blur(25px);"><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+
+
+<article class="article container container-sm padding-bottom-large"><h1 class="article-title">TypeScripting Try-Catch</h1>
+  <p class="article-meta">Feb 25, 2023</p>
+  <div class="text-lead row"><div class="margin-right">tl;dr:</div>
+      <div class="col-fill"><a href="https://github.com/nmacmunn/notry" target="_blank" rel="noreferrer">notry-ts</a> is a type safe error handling alternative to try-catch
+  </div></div>
+
+  <p>Suppose you&#39;re asked to write a new function to determine whether a person
+    can vote. It should be easy since there&#39;s already a <code>getPerson</code> function.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>Notice that the function signature gives no hint that <code>getPerson</code>
+    could throw. This is one problem we want to address.
+  </p>
+
+  <p>Here&#39;s the new function.</p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>And last but not least, the main progam.</p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>Note here that the type of <code>exceptionVar</code> is
+    <code>unknown</code>. If you make it something more specific you&#39;ll get a
+    compiler error.
+  </p>
+
+  <pre>Catch clause variable type annotation must be &#39;any&#39; or &#39;unknown&#39; if specified.</pre>
+
+  <p>This is another problem we&#39;ll try to tackle.</p>
+
+  <h4>Test Cases</h4>
+
+  <p>If you run the previous example, you should see three lines written to the
+    console.
+  </p>
+
+  <p>The first shows the output of a successful invocation of <code>main</code>.
+  </p>
+
+  <pre>Neil can&#39;t vote</pre>
+
+  <p>The second invocation failed with what is probably a user error.</p>
+
+  <pre>Error: Neal not found</pre>
+
+  <p>The final result is another error but this time the meaning is less clear.
+    It could be an environmental or maybe a programming error. In either case,
+    it&#39;s not something we expect the user to be able to handle.
+  </p>
+
+  <pre>Error: Failed to get record</pre>
+
+  <p>Unfortunately, this isn&#39;t terribly helpful. It means nothing to the user and
+    doesn&#39;t give the developer much to debug with.
+  </p>
+
+  <p>So how could we improve? A few ideas:</p>
+
+  <ol><li>Log the error stack trace: this would be helpful to the developer, but
+      probably scare the user.
+    </li>
+    <li>Report the stack trace to the developer. On user errors, this would
+      produce noise for the developer. On developer errors, the message would
+      still be confusing to the user.
+    </li>
+    <li>Find a mechanism for differentiating error types.</li></ol>
+
+  <h3>Approaches</h3>
+
+  <p>Let&#39;s explore idea #3 and compare error handling approaches using the three
+    test cases.
+  </p>
+
+  <h4>try-catch</h4>
+
+  <p>One simple solution is to throw subclassed Error objects.</p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>That&#39;s better but the type checker doesn&#39;t help much. Without reading the
+    <code>getPerson</code> source, we can&#39;t tell what (or even if) it could
+    throw. <code>exceptionVar</code> still has type <code>unknown</code>.
+    Narrowing it takes extra effort and if <code>getPerson</code> starts throwing
+    something different, the compiler won&#39;t tell us.
+  </p>
+
+  <h4>Return Types</h4>
+
+  <p>One way to lean on the type system for error handling is by using a
+    specialized return type. We&#39;ll use a union of the successful return type and
+    <code>Error</code>s to keep things simple.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>This yields the same result as <b>try-catch</b> with the added benefit of
+    type safety. The biggest downside is the extra check in <code>canVote</code>
+    (more on that later).
+  </p>
+
+  <p>Following this approach boils down to:</p>
+
+  <ol><li>Replacing <code>throw</code> with <code>return</code> in your code</li>
+    <li>Updating the return types</li>
+    <li>Propagating errors up the call stack</li>
+    <li>Wrapping invocations of code you don&#39;t control in <code>try-catch</code></li></ol>
+
+  <p>There are some simple utilities you can write to make this easier. Still,
+    one can&#39;t help but wonder - is there a better way?
+  </p>
+
+  <h4>notry-ts</h4>
+
+  <p>What if we could get the convenience of <b>try-catch</b> and the type safety
+    of <b>return types</b>? That&#39;s what I set out to answer when I created
+    <b>notry-ts</b>. Let&#39;s see how our example looks with <code>notry</code>.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>This produces the same output as the two previous solutions, so how does it
+    work?
+  </p>
+
+  <p>The first thing you&#39;ll notice is the new <code>Why</code> type.</p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p><code>Why</code> represents the type returned when <code>getPerson</code>
+    fails. It&#39;s used in the new first parameter of <code>getPerson</code>.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p><code>quit</code> has the call signature
+    <code>(val: Why) =&gt; never</code>. Calling it immediately terminates
+    <code>getPerson</code>. So in this case, we could terminate
+    <code>getPerson</code>
+    by calling:
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>Rather than call <code>quit</code> directly, we use two convenience functions.
+  </p>
+
+  <p>This quits with
+    <code>{ type: "DevError" }</code> if
+    <code>getRecord("person", name)</code>
+    throws, returning a <code>Person</code> otherwise.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>This quits with
+    <code>{ type: "UserError", message: "&lt;name> not found" }</code>
+    if <code>person</code> is undefined.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p><code>canVote</code> is straightforward. It takes a <code>quit</code>
+    parameter of the same type as <code>getPerson</code> and forwards it.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>At the top level, <code>main</code> invokes <code>canVote</code> with
+    <code>notry</code> and assigns the result to <code>did</code>.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p><b>How it works</b></p>
+
+  <p>Here is the function signature of <code>notry</code>.</p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>The generic types <code>&lt;Y, N, Args extends unknown[]></code> represent
+    the successful return type, failed return type, and <code>quitable</code> arguments.
+  </p>
+
+  <p>Any function that accepts <code>Quit</code> as it&#39;s first parameter is a
+    <code>Quitable</code>.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>So <code>notry</code> requires a <code>Quitable</code> function and
+    arguments to pass it and returns a <code>Did</code> containing the result
+    (either <code>Y</code> or <code>N</code>).
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p><code>Did</code> is a riff on the popular <code>Either</code> or
+    <code>Result</code>
+    types. It&#39;s a discriminated union that indicates whether
+    <code>quitable</code> returned or quit. In this case, it&#39;ll be
+    <code>{ y: { val: boolean } }</code> or
+    <code>{ n: { val: Why, exception: unknown } }</code>.
+  </p>
+
+  <p>The last piece of the puzzle is <code>MaybeAsyncDid&lt;Y, N></code>. It
+    resolves to <code>Did&lt;Y, N></code> or
+    <code>Promise&lt;Did&lt;Y, N>></code>
+    depending on whether <code>quitable</code> returns a promise.
+  </p>
+
+  <h3>Error Handling At Scale</h3>
+
+  <p>In the preceding problem, the difference in error handling solutions might
+    seem insignificant. Here we&#39;ll look at a fleshier example and try to
+    understand how each approach scales.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>The three external functions <code>c</code>, <code>d</code>, and
+    <code>e</code>
+    could throw so <code>main</code> catches and logs the exception. In the base
+    case there is no way to differentiate the three possible failures.
+  </p>
+
+  <h4>try-catch</h4>
+
+  <p>Let&#39;s introduce a utility <code>safe</code> to catch arbitrary exceptions and
+    throw something specific.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>The diff shows that it&#39;s an unobtrusive change.</p>
+
+  
+
+
+<div class="card margin-bottom-large"><div class="card-body"><div></div></div></div>
+
+  <p>However, no type safety.</p>
+
+  <h4>Return types</h4>
+
+  <p>This time we use a variant of <code>safe</code> that catch exceptions and returns
+    something specific.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>Unfortunately now three of the five lines in both <code>a</code> and
+    <code>b</code> are error handling. It&#39;s easy to see how this can get unwieldy
+    at scale.
+  </p>
+
+  
+
+
+<div class="card margin-bottom-large"><div class="card-body"><div></div></div></div>
+
+  <p>But now we have type safety.</p>
+
+  <h4>notry-ts</h4>
+
+  <p>Finally, an implementation using <code>notry</code>.</p>
+
+  <div class="card margin-bottom-large"><div class="tabs svelte-qpule3"></div>
+
+  <div class="card-body">
+
+
+<div></div></div>
+  <div class="card-footer svelte-qpule3"><div style="flex: 1;"><pre class="svelte-qpule3"></pre></div>
+    <div class="margin-left"><button class="btn-small">Run!</button></div></div>
+</div>
+
+  <p>Apart from the <code>quit</code> parameters, this looks more or less like the
+    base case.
+  </p>
+
+  
+
+
+<div class="card margin-bottom-large"><div class="card-body"><div></div></div></div>
+
+  <p>Admittedly, all those <code>quit: Quit&lt;Why></code> parameters are a bit cumbersome
+    so, like anything, you should weigh the benefits against the costs.
+  </p>
+
+  <h3>Comparison</h3>
+
+  <p>Let&#39;s wrap up by looking at what we get from each approach.</p>
+
+  <h4>Type Safety</h4>
+
+  <p>None with <b>try-catch</b> and roughly the same degree with
+    <b>return types</b> and <b>notry-ts</b> including the ability to tell at a glance
+    if and what errors could occur.
+  </p>
+  <p>The biggest difference is that it&#39;s easier to ignore <b>return types</b>. If
+    you call a function that normally returns <code>void</code>, you can easily
+    forget to check whether an error occurred. This problem only affects
+    <b>notry-ts</b> where <code>notry</code> is called.
+  </p>
+
+  <h4>Developer Experience</h4>
+
+  <p>With <b>try-catch</b>, you could use a utility like <code>safe</code> to incrementally
+    improve your error handling done with minimal effect on readability.
+  </p>
+  <p><b>return types</b> are intuitive since it&#39;s natural to associate a function&#39;s
+    return value with its outcome. This solution requires the greatest amount of
+    code and gains usefulness the more it&#39;s used.
+  </p>
+  <p><b>notry</b> has the least intuitive and most sophisticated typing. The
+    function body&#39;s intent remains clear with error handling is mostly out of
+    view. As with
+    <b>return types</b>, its usefulness is dependent on how widely it&#39;s used.
+  </p>
+
+  <h3>Conclusion</h3>
+
+  <p class="padding-bottom-large">If you care about type safety (why else would you be here), use
+    <b>return types</b> or <b>notry</b>. Choose <b>notry</b> for added readability
+    and safety at the cost of complexity.
+  </p>
+
+  <h3>Resources</h3>
+
+  <div class="margin-bottom"><small class="text-muted">package</small>
+    <a href="https://github.com/nmacmunn/notry" target="_blank" rel="noreferrer">notry-ts</a></div>
+  <div class="margin-bottom"><small class="text-muted">package</small>
+    <a href="https://github.com/supermacro/neverthrow" target="_blank" rel="noreferrer">neverthrow</a></div>
+  <div class="margin-bottom"><small class="text-muted">package</small>
+    <a href="https://github.com/wiktor-obrebski/type-safe-errors" target="_blank" rel="noreferrer">type-safe-errors</a></div>
+
+  <div class="margin-bottom"><small class="text-muted">article</small>
+    <a href="https://dev.to/_gdelgado/type-safe-error-handling-in-typescript-1p4n" class="success" target="_blank" rel="noreferrer">Type-Safe Error Handling In TypeScript
+    </a></div>
+  <div class="margin-bottom"><small class="text-muted">article</small>
+    <a href="https://khalilstemmler.com/articles/enterprise-typescript-nodejs/functional-error-handling/" class="success" target="_blank" rel="noreferrer">Functional Error Handling
+    </a></div>
+  <div class="margin-bottom"><small class="text-muted">article</small>
+    <a href="https://www.huy.rocks/everyday/typescript-implement-rust-style-result" class="success" target="_blank" rel="noreferrer">TypeScript / Implement Rust-style Result
+    </a></div></article></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_9vwkc9 = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.21273dc2.mjs"),
+						import("../_app/immutable/entry/app.31671333.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_9vwkc9.element, {
+							node_ids: [0, 2, 5],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.57e72e68.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/resources.c759178c.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.21273dc2.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.4711a160.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.268a9c8a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.da45b3b5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.31671333.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.1aef7c0a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.0e1de7b8.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-sqlite-repl-page.svelte.a1b98f8a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/resources.cfbab304.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.06c607fb.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.e1d427ae.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/sqlite-repl.72ed6975.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.1d147107.mjs"><title>Building a SQLite Playground</title><!-- HEAD_svelte-1law5hj_START --><meta name="description" content="How to build a SQLite REPL that runs entirely in the browser."><!-- HEAD_svelte-1law5hj_END -->
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main class="svelte-1sdjs4s" style="filter: blur(25px);"><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+
+
+<article class="article container container-sm padding-bottom-large"><h1 class="article-title">Building a SQLite Playground</h1>
+  <p class="article-meta">Mar 7, 2023</p>
+  <div class="text-lead row"><div class="margin-right">tl;dr:</div>
+      <div class="col-fill">Build a <a class=" svelte-ay64ok" href="https://github.com/nmacmunn/qads-repl" target="_blank" rel="noreferrer">quick-and-dirty SQLite REPL</a>
+    using WebAssembly and Monaco
+  </div></div>
+
+  <p>A read–eval–print loop (REPL) is an interactive environment that takes user
+    inputs, executes them, and returns the result. I made a TypeScript REPL
+    using Monaco and SWC to show how <a class=" svelte-ay64ok" href="/posts/notry" target="_self" rel="noreferrer">notry-ts</a> works
+    and thought it would be fun to do the same for SQLite.
+  </p>
+
+  <p>The good news is I got it working.</p>
+
+  <h5>SQLite REPL Svelte Edition</h5>
+  <div class="card margin-bottom-large">
+  <div class="padding-top padding-bottom">
+
+
+<div></div></div>
+  <div class="card-footer"><div style="display: flex;"><div class="margin-right-small" style="flex: 1;"><div class="text-muted"><small>SQLite version: <br>
+              Stored: 0B
+            </small></div></div>
+      <div><button class="btn-small">Run</button>
+        <button class="btn-small">Reset</button></div></div></div></div>
+
+  <p>Unfortunately, by the time I got everything working with SvelteKit it was a
+    little too complex to describe in a post. So I distilled it down to a
+    quick-and-dirty REPL that can help you get started with Monaco or SQLite in
+    the browser.
+  </p>
+
+  <h3>Some background</h3>
+
+  <h4>Databases in the browser</h4>
+
+  <p>In 2014, I was doing a lot of work with Meteor and was blown away when I
+    learned about Minimongo.
+  </p>
+
+  <pre>Minimongo is essentially an in-memory, non-persistent implementation of Mongo in pure JavaScript. It serves as a local cache that stores just the subset of the database that this client is working with. Queries (find) on these collections are served directly out of this cache, without talking to the server.</pre>
+
+  <p>I thought it would be great if something similar existed based on a
+    relational database. It turns out that once upon a time there was a browser
+    API specification called Web SQL. Unfortunately, it was deprecated back in
+    2010. The reason is captured well in a StackOverflow answer.
+  </p>
+
+  <pre>Short version: Web SQL was deprecated because standards are really important and turning Web SQL into a proper standard would have been prohibitively difficult.</pre>
+
+  <p>Fair enough. Don&#39;t let that get you down though, we&#39;re living in the future
+    now. It&#39;s a time when you don&#39;t need a built-in API to get native
+    performance. It&#39;s the time of WebAssembly.
+  </p>
+
+  <h4>Everything is Wasm</h4>
+
+  <p>One technology that I&#39;m super excited about is WebAssembly. Years ago I
+    decided to trade the power of C for the ubiquity of JavaScript. For the most
+    part, it has felt like the right decision and having a C background was a
+    good foundation for work on the web.
+  </p>
+
+  <p>But now I don&#39;t have to compromise. Languages like C and Rust already
+    compile to Wasm. <a class=" svelte-ay64ok" href="https://swc.rs/" target="_blank" rel="noreferrer">SWC</a> is a Rust-based web
+    transpiler that compiles to Wasm. It&#39;s what I used to perform in-browser transpilation
+    for the TypeScript REPL.
+  </p>
+
+  <p>Amazingly, SQLite (written in C) is already compiled to Wasm.</p>
+
+  <h4>Monaco</h4>
+
+  <p>Monaco is the code editor that powers VSCode. It provides SQL syntax
+    highlighting, hotkey registration, and a ton of other features that we&#39;ll
+    only scratch the surface of. If you want to get a better idea of Monaco&#39;s
+    capabilities, be sure to check out the <a class=" svelte-ay64ok" href="https://microsoft.github.io/monaco-editor/playground.html" target="_blank" rel="noreferrer">Monaco Playground</a>.
+  </p>
+
+  <h3>Let&#39;s Build</h3>
+
+  <h4>SQLite3</h4>
+
+  <h5>Getting the code</h5>
+
+  <p>Not only is SQLite already precompiled to Wasm but there are a handful of
+    demos showing how to use it. We just need to grab the WebAssembly &amp;
+    JavaScript archive from <a class=" svelte-ay64ok" href="https://sqlite.org/download.html" target="_blank" rel="noreferrer">here</a> and then figure out which files to use.
+  </p>
+
+  <p>There are a few options to choose from depending on whether you:</p>
+
+  <ol><li>are using a bundler</li>
+    <li>want to use the UI thread or a worker</li>
+    <li>want a synchronous or promise-based API (only applies to workers)</li></ol>
+
+  <p>We&#39;re going to use a bundler since it makes working with Monaco easier. It&#39;s
+    a REPL so we won&#39;t worry about UI responsiveness while the DB is running
+    queries. We are interested in the persistence options though. From the
+    SQLite Wasm docs:
+  </p>
+
+  <pre>This API provides database persistence via localStorage/sessionStorage and, in compatible browsers, the Origin-Private FileSystem.</pre>
+
+  <pre>kvvfs is an sqlite3_vfs implementation conceived and created to store a whole sqlite3 database in the localStorage or sessionStorage objects. Those objects are only available in the main UI thread, not Worker threads, so this feature is only available in the main thread.</pre>
+
+  <pre>The Origin-Private FileSystem, OPFS, is an API providing browser-side persistent storage which, not coincidentally, sqlite3 can use for storing databases.</pre>
+
+  <pre>As of late 2022, only bleeding-edge versions of Chromium-derived browsers have the necessary APIs.</pre>
+
+  <p>So, in the interest of maximizing compatibility, we&#39;ll run SQLite in the
+    main thread which requires these files.
+  </p>
+
+  <ol><li>sqlite3.wasm</li>
+    <li>sqlite3-bundler-friendly.mjs</li>
+    <li>sqlite3-opfs-async-proxy.js</li></ol>
+
+  <p>Since we aren&#39;t using OPFS, the third shouldn&#39;t be needed but the bundler
+    fails without it.
+  </p>
+
+  <h5>Initializing</h5>
+
+  <p>We&#39;ll copy the files into the <code>src</code> directory where they can be
+    imported by <code>main.ts</code>. Then we can initialize SQLite and create a
+    database.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>The filename <code>:localStorage:</code> tells SQLite to use local storage
+    for persistence. We pass the flag <code>c</code> to create the database if
+    it doesn&#39;t exist and <code>t</code> to enable tracing (appears in the developer
+    console).
+  </p>
+
+  <h5>Running queries</h5>
+
+  <p>The SQLite API provides a few ways to build and run queries but we&#39;ll stick
+    to <code>exec</code>.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>We get the start time to help detect slow queries and then call <code>db.exec</code>, passing it SQL to run and an options object containing
+    <code>rowMode: &quot;object&quot;</code>. This tells <code>exec</code> to return the result
+    rows as an array of key value-pairs.
+  </p>
+
+  <p>We&#39;ll revisit <code>run</code> later when it&#39;s time to integrate with Monaco.
+  </p>
+
+  <h5>Clearing the database</h5>
+
+  <p>Apart from creating a database and executing queries, the only other SQLite
+    functionality we need is for clearing the database.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>This removes all SQLite data from local storage.</p>
+
+  <h4>Monaco</h4>
+
+  <p>We&#39;re going to lean on Monaco to do all of the heavy lifting in terms of UI.
+  </p>
+
+  <h5>Installation</h5>
+
+  <p>Via npm:</p>
+
+  <pre>$ npm install monaco-editor</pre>
+
+  <h5>Initializing</h5>
+
+  <p>Monaco uses the global variable <code>MonacoEnvironment</code> to specify where
+    to find the worker code. This is how that looks with Vite.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>Without it, this warning will appear in the console:</p>
+
+  <pre>Could not create web worker(s). Falling back to loading web worker code in main thread, which might cause UI freezes.</pre>
+
+  <h5>Models</h5>
+
+  <p>We&#39;ll create two objects of type <code>monaco.editor.ITextModel</code>
+    representing text files. One will contain query history and be displayed in a
+    read-only editor. The other will contain the active query being edited.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>The first argument is the initial content of the model and the second is the
+    language.
+  </p>
+
+  <h5>Editor</h5>
+
+  <p>Now that we have models, we need to display them somewhere. Since there will
+    be two nearly-identical editors, we&#39;ll define a function to initialize them.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>We won&#39;t go into all of the options here, most are self-explanatory and you
+    to play around with them all in the <a class=" svelte-ay64ok" href="https://microsoft.github.io/monaco-editor/playground.htm" target="_blank" rel="noreferrer">Monaco Playground</a>. What&#39;s important is that we pass a <code>div</code> where the editor should
+    be mounted, a model to display, and the readOnly option.
+  </p>
+
+  <h5>Resizing</h5>
+
+  <p>We want the editor to resize with its content so we set the option
+    <code>scrollBeyondLastLine: false</code> and register an event handler.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>When the content changes size, the container height will be updated and the
+    editor will re-layout. Here the height is limited to 600px but it could be
+    anything (like function of the window size).
+  </p>
+
+  <p>It would also be a good idea to listen for <code>resize</code> events on the
+    window and trigger an update. In the name of keeping it quick-and-dirty
+    we&#39;ll leave that as an exercise. Here&#39;s the finished <code>initEditor</code>
+    function.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>Those are the basic components needed to put together our REPL. Before we
+    do, let&#39;s take a quick look at some nice-to-have features.
+  </p>
+
+  <h5>Markers</h5>
+
+  <p>We can use markers to highlight text in a model. We&#39;ll do this when a query
+    fails (rather than writing to the console).
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>This will draw a squiggly red line under the entire content of the editor.
+    When the user hovers over the query, <code>exceptionVar</code> will appear in
+    a tooltip like so:
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h5>Actions</h5>
+
+  <p>As our final feature, we&#39;ll register an action to call run when <kbd>shift + enter</kbd> is pressed.
+  </p>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h4>Putting It Together</h4>
+
+  <p>At this point we&#39;ve seen all of the important bits so we&#39;re ready to build
+    our crude REPL.
+  </p>
+
+  <h5>index.html</h5>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <h5>main.ts</h5>
+
+  <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+  <p>That&#39;s it! For project configuration and setup instructions, check out the <a class=" svelte-ay64ok" href="https://github.com/nmacmunn/qads-repl" target="_blank" rel="noreferrer">GitHub repository</a>.
+  </p>
+
+  <p>For a slightly more feature-rich SQLite REPL to play with, <a class=" svelte-ay64ok" href="/sqlite" target="_self" rel="noreferrer">here</a>&#39;s the original that I created in Svelte.
+  </p>
+
+  <h3>Resources</h3>
+
+<div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://www.npmjs.com/package/monaco-editor" target="_blank" rel="noreferrer">Monaco Editor</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://sqlite.org/download.html" target="_blank" rel="noreferrer">SQLite3</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">docs</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="warning svelte-ay64ok" href="https://microsoft.github.io/monaco-editor/playground.html" target="_blank" rel="noreferrer">Monaco Playground</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">docs</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="warning svelte-ay64ok" href="https://sqlite.org/wasm/doc/trunk/api-oo1.md" target="_blank" rel="noreferrer">SQLite3 Object Oriented API</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">docs</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="warning svelte-ay64ok" href="https://sqlite.org/wasm/doc/trunk/persistence.md" target="_blank" rel="noreferrer">SQLite 3 Persistent Storage Options</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://softwareengineering.stackexchange.com/a/220257/146806" target="_blank" rel="noreferrer">Why is Web SQL database deprecated?</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://hackernoon.com/execute-millions-of-sql-statements-in-milliseconds-in-the-browser-with-webassembly-and-web-workers-3e0b25c3f1a6" target="_blank" rel="noreferrer">Execute millions of SQL statements in milliseconds in the browser with WebAssembly and Web Workers.</a></div>
+    </div></article></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_9vwkc9 = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.21273dc2.mjs"),
+						import("../_app/immutable/entry/app.31671333.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_9vwkc9.element, {
+							node_ids: [0, 2, 6],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=Element.prototype.scrollIntoView%2CIntersectionObserver"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-LYB09F73EQ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LYB09F73EQ");
+    </script>
+
+    <meta http-equiv="content-security-policy" content="">
+		<link href="../_app/immutable/assets/_layout.57e72e68.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/_page.8e58c5ab.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/resources.c759178c.css" rel="stylesheet">
+		<link href="../_app/immutable/assets/editor.911c6360.css" rel="stylesheet">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/start.21273dc2.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.4711a160.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/singletons.268a9c8a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/index.da45b3b5.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/app.31671333.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/preload-helper.41c905a7.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.svelte.1aef7c0a.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/_layout.ts.fb1865a6.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/_layout.da46b06b.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-layout.svelte.0e1de7b8.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/entry/posts-uni-testing-page.svelte.678c7341.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/resources.cfbab304.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/article.06c607fb.mjs">
+		<link rel="preload" as="script" crossorigin="anonymous" href="../_app/immutable/chunks/snippet.e1d427ae.mjs"><title>Uni-Testing 101</title><!-- HEAD_svelte-1fkt6kq_START --><meta name="description" content="Getting 100% code coverage with a single Playwright test"><meta property="og:title" content="Uni-Testing 101"><meta property="og:url" content="https://neil.macmunn.com/posts/uni-testing"><meta property="og:description" content="Getting 100% code coverage with a single Playwright test"><meta property="og:image" content="https://neil.macmunn.com/playwright-process.png"><meta property="og:type" content="article"><!-- HEAD_svelte-1fkt6kq_END -->
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+
+
+<div class="app"><main class="svelte-1sdjs4s" style="filter: blur(25px);"><div class="container container-sm"><div class="margin-top-small"><a href="/">home</a></div></div>
+
+
+<article class="article container container-sm padding-bottom-large"><h1 class="article-title">Uni-Testing 101</h1>
+  <p class="article-meta">Apr 3, 2023</p>
+  <div class="text-lead row"><div class="margin-right">tl;dr:</div>
+      <div class="col-fill">Playwright docs advise writing fewer, longer tests. I follow that advice to
+    its logical conclusion.
+  </div></div>
+
+  <h3></h3>
+
+<p>I&#39;m a big advocate of unit testing and typically aim for 100% code
+      coverage on anything that&#39;s going to see real use.
+    </p>
+
+    <p>Aside from improving stability, reliability, and maintainability, the
+      test-writing process forces me to ask some hard-hitting questions.
+    </p>
+
+    <div class="padding-left padding-right"><p class="quote svelte-1wtwg41"><i>Does this belong here? Am I doing the same thing elsewhere? Is this
+      consistent with the rest of the code?
+    </i></p>
+  <p class="padding-left"><small>- Me, while testing</small></p>
+</div>
+
+    <p>It&#39;s kind of like a code pre-review. It improves the codebase and my
+      understanding of it.
+    </p>
+
+  <h3>Unit Testing Woes</h3>
+
+<p>You&#39;re probably thinking,
+      <i>&quot;Great! Sounds like this software quality thing is just about licked.&quot;
+      </i>
+      Unfortunately, such is not the case.
+    </p>
+
+    <p>After writing many thousands of unit tests and reaching 100% code coverage
+      across many codebases, the same problems keep cropping up.
+    </p>
+
+    <h4>Volume</h4>
+
+<p>The lines of code for unit tests typically outnumber those belonging to
+        the module under test. Here is an example from the Jest documentation.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+      <p>That&#39;s about as simple as it gets. The corresponding test is about the
+        same size yet far from comprehensive.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <h4>Refactoring</h4>
+
+<p>Unit tests tend to get obliterated in refactoring. That makes sense
+        because when you refactor, you&#39;re changing the units. In theory, many
+        test cases should make it into the new tests. However in practice, it&#39;s
+        often easier to rewrite them.
+      </p>
+
+      <p>Another problem arises specifically when testing with code coverage.
+      </p>
+
+      <div class="padding-left padding-right"><p class="quote svelte-1wtwg41"><i>You may also find yourself testing implementation details just so you
+        can make sure you get that one line of code that&#39;s hard to reproduce in
+        a test environment. You really want to avoid testing implementation
+        details because it doesn&#39;t give you very much confidence that your
+        application is working and it slows you down when refactoring.
+      </i></p>
+  <p class="padding-left"><small>- Kent C Dodds</small></p>
+</div>
+
+      <p>I once read that software is either in one of two states: constant
+        refactoring or dying. Neither bodes particularly well for unit tests.
+      </p>
+
+    <h4>Designing for Test</h4>
+
+<p>Writing code that is readily testable takes more time and effort than
+        just getting something working. When you&#39;re prototyping, designing for
+        test may not make sense and returning to make your code testable later
+        can be expensive.
+      </p>
+
+    <h4>Quality</h4>
+
+<p>We tend to treat test code as second-class and don&#39;t hold it to the same
+        quality standard as production code. For example, I normally aim to keep
+        my functions short and files under 200 lines whenever possible yet
+        flagrantly ignore these guidelines when testing. Why? Test code is still
+        code.
+      </p>
+
+    <h4>Bugs</h4>
+
+<p>I could live with all of the above if no bugs ever made it to
+        production. Many are caught, some aren&#39;t, and some seem embarrassingly
+        obvious.
+      </p>
+
+  <h3>Goals</h3>
+
+<p>These issues combined seem like a high price to pay for a partial
+      solution. After accepting that no test suite could prove my program&#39;s
+      correctness, I started thinking about a more pragmatic approach to testing
+      and some of the qualities of an ideal test suite.
+    </p>
+
+    <p class="margin-left"><small>Optimist&#39;s Rendition of Ideal Test Suite:</small></p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <h4>Effective</h4>
+
+<p>Catches bugs and improves understanding <b>initially</b> when written
+        and <b>continuously</b> and as changes are made.
+      </p>
+
+    <h4>Fast</h4>
+
+<p>Quick <b>to run</b>, the faster the better. If you&#39;re tempted to do
+        something else while your tests run, you start to pay context switching
+        costs.
+      </p>
+
+      <p>Quick <b>to write</b>. We prefer to spend our time changing the world
+        with production code after all.
+      </p>
+
+    <h4>Maintainable</h4>
+
+<p><b>Short</b>. Software bugs are strongly correlated with lines of code
+        and there&#39;s really no reason to expect test code to be different.
+      </p>
+
+      <p><b>High quality</b>. Tests should be held to the same quality standard
+        as the rest of our code. We want to be able to tell at a glance what&#39;s
+        being tested and how.
+      </p>
+
+      <p><b>Decoupled</b>. Tests not depending on code being written in a
+        particular way are more resilient to changes and lets you focus on
+        expressing intent.
+      </p>
+
+    <h4>Low Frustration</h4>
+
+<p><b>Reliable</b>. No false positives or negatives. It&#39;s hard to think of
+        anything more frustrating for a coder than debugging an intermittent
+        test failure that doesn&#39;t affect users.
+      </p>
+
+      <p><b>Targeted</b>. Introducing a bug causes a single test to fail, clearly
+        indicating what the problem is.
+      </p>
+
+  <h3>What about E2E?</h3>
+
+<p>So the brute force unit testing approach isn&#39;t enough. What about
+      end-to-end testing?
+    </p>
+
+    <p>Anyone who&#39;s done any UI automation knows that special brand of
+      frustration known as the flaky test. In 2014, I was consulting on a
+      MeteorJS project that had hundreds of E2E tests using Selenium and
+      PhantomJS. Here&#39;s the <b>git log</b> as I remember it.
+    </p>
+
+    <div class="padding-left padding-right"><pre>d8eb580 fix flaky test
+f744d31 fix flaky test
+f88dd2d fix flaky test
+0c27836 fix flaky test
+b6f8bfa fix flaky test
+3e42121 fix flaky test
+5e414d7 game changing feature</pre></div>
+
+    <p>Reliability is a major concern with E2E testing; investigating false
+      positives can get costly.
+    </p>
+
+    <p>Difficulty isolating failures is another concern. When a test does fail,
+      how easy is it to identify the reason?
+    </p>
+
+    <p>A final concern is speed. Bringing up browsers and loading apps inevitably
+      takes time.
+    </p>
+
+    <p>Fortunately, native browser support for UI automation and modern tools
+      like Playwright (Trace Viewer FTW 👏) have come a long way toward
+      improving reliability and identifying failures.
+    </p>
+
+    <p>So what can we do about speed?</p>
+
+  <h3>Zero to One (hundred percent coverage)</h3>
+
+<p>A thing we can do is reduce the number of tests. All the way down. Like,
+      one test.
+    </p>
+
+    <p>From <a class=" svelte-ay64ok" href="https://playwright.dev/docs/best-practices" target="_blank" rel="noreferrer">Playwright Best Practices</a>:
+    </p>
+
+    <div class="padding-left padding-right padding-bottom"><p><strong>Write fewer tests but longer tests</strong></p>
+
+      <p>When it comes to end to end testing having long tests is not a bad
+        thing. It&#39;s ok to have multiple actions and assertions in your test so
+        you can test complete App flows. You should avoid separating your
+        assertions into individual test blocks as it doesn&#39;t really bring much
+        value and just slows down the running of your tests.
+      </p></div>
+
+    <p>Here&#39;s a test exercising all of the front-end code for
+      <a class=" svelte-ay64ok" href="https://venue.tube" target="_blank" rel="noreferrer">VenueTube</a> showing real-time code coverage.
+    </p>
+
+    <div class="card margin-bottom-large"><video controls class="svelte-1yye97l"><source src="../unitest.webm" type="video/webm"><track kind="captions"></video></div>
+
+    <h4>The Process</h4>
+
+<p>Creating the test was relatively painless with Playwright, a bit of
+        hacking, and the following process.
+      </p>
+
+      <div style="display: flex; justify-content: center;"><img src="../playwright-process.svg" alt="Process cycle diagram" class="svelte-1yye97l"></div>
+
+      <h5>Run Test</h5>
+
+      <p>Run the test with a custom test runner (see below). Initially just
+        navigate to the home page.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+      <h5>Start Inspector</h5>
+
+      <p>Start the Playwright Inspector (Code Generator) by appending <code>page.pause()</code> to the end of the test. The test runner shown below does so automatically.
+      </p>
+
+      <h5>Exercise Uncovered</h5>
+
+      <p>The hardest part of the process is viewing code coverage. The easiest
+        way is to write the coverage output to disk and use the <code>c8</code> package
+        to generate HTML reports.
+      </p>
+
+      <p>Look for uncovered code that can be easily exercised from the current
+        state. Start recording with the inspector and perform the necessary
+        actions manually.
+      </p>
+
+      <h5>Add to Test</h5>
+
+      <p>Copy the recorded steps into the test. Give complex locators clear
+        variable names and look for reuse opportunities.
+      </p>
+
+      <p>Run again ensuring the new steps work and cover the targeted lines.</p>
+
+      <h5>&lt; 100% Covered?</h5>
+
+      <p>Repeat the cycle until everything is covered.</p>
+
+    <h4>Test Runner</h4>
+
+<p>Here&#39;s a simplified version of the custom test runner used in the above
+        process.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+      <p>The hacking part has to do with aggregating the test coverage and
+        dealing with sourcemaps. It&#39;s omitted as it could easily fill another
+        post.
+      </p>
+
+  <h3>Challenges</h3>
+
+<p>These should be no surprise to experienced E2E testers but if you spend
+      most of your time on unit tests, you&#39;ll have some new challenges to
+      consider.
+    </p>
+    <h4>Authentication</h4>
+
+<p>Because VenueTube uses passwordless authentication, signing in took a
+        bit of work. I used the <code>nodemailer</code> package to create an
+        ethereal.email account that&#39;s API accessible. Then I used the
+        <code>imapflow</code>
+        package to get the signin email and <code>mailparser</code> to extract the
+        link.
+      </p>
+    <h4>External APIs</h4>
+
+<p>Firebase Authentication is one of the external APIs that the application
+        sends requests to. Playwright provides a way to intercept requests and
+        provide your own response. I didn&#39;t because:
+      </p>
+
+      <ol><li>I don&#39;t intend to run the test in CI (yet)</li>
+        <li>Hitting the real thing is low consequence</li>
+        <li>It&#39;s more realistic this way</li></ol>
+
+      <p>I did have to simulate a webhook to complete one workflow.</p>
+    <h4>Error Handling</h4>
+
+<p>Exercising error handlers took some understanding of failure modes and a
+        bit of tampering with reality. For example, to test the Sentry
+        integration, I injected a script into the page to throw an exception
+        (obviously none of my actual code would 😉).
+      </p>
+
+  <h3>Results</h3>
+
+<p>Here&#39;s what the test looked like early on in the writing process.</p>
+
+    <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+    <p>So how does this solution stack up against our ideal test suite?</p>
+
+    <h4>Effectiveness</h4>
+
+<p>I caught a number of bugs, found dead code, and identified some really
+        bad UX in the course of writing the test which I wouldn&#39;t have with unit
+        testing. That said, there are almost certainly still bugs that unit
+        tests would catch.
+      </p>
+
+      <p>Whether the test catches regressions as features are added remains to be
+        seen.
+      </p>
+
+    <h4>Speed</h4>
+
+<p>It takes about 90s which is close to the upper limit of what I&#39;m likely
+        to tolerate. We&#39;ll discuss opportunities to improve in a bit.
+      </p>
+
+      <p>Correcting for one-time costs (Playwright learning curve and writing the
+        test runner), it took about a day to actually write the test.
+      </p>
+
+    <h4>Maintainability</h4>
+
+<p>It&#39;s short. Around 250 lines.</p>
+
+      <p>Because the test was so short, I wasn&#39;t too concerned about quality. I
+        did assign non-obvious element selectors to clearly named variables and
+        group common sequences into reusable functions.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+      <p>I didn&#39;t change any application code for the sake of the test although
+        there were a few places where a different structure would be mutually
+        beneficial. This indicates that the test should be resilient to
+        application refactoring.
+      </p>
+
+    <h4>Frustration Factor</h4>
+
+<p>There is definitely still some flakiness but Playwright&#39;s Trace Viewer
+        really simplifies finding the cause (typically poor selector choice).
+      </p>
+
+      <p>If a Playwright command fails, it prints a debugging message and I
+        explicitly log each step. However, if the failure is a real problem, it
+        could take some digging through the app code to find.
+      </p>
+
+  <h3>Unexpected Wins</h3>
+
+<p>The main motivator for this project was to get the greatest amount of test
+      coverage in the shortest amount of time. While that was a success, there
+      were also some unexpected benefits.
+    </p>
+
+    <h4>Retroactive Requirements</h4>
+
+<p>VenueTube started as a <a class=" svelte-ay64ok" href="https://pipedream.com" target="_blank" rel="noreferrer">pipedream</a> script and evolved from there based on user feedback. There was never
+        a formal plan or even workflow documentation.
+      </p>
+
+      <p>Finding and eliminating uncovered code was an exercise in understanding
+        workflows and a good opportunity to retroactively create a requirements
+        document. Even without a separate document, a well written test can
+        function as a passable specification.
+      </p>
+
+      <p>The same is true of unit tests but at a lower level. An E2E test
+        provides value to a wider subset of stakeholders.
+      </p>
+
+    <h4>Awkward Workflows</h4>
+
+<p>Writing the test also helped catch cumbersome UX. Some workflows that
+        seemed intuitive when written were challenging to test. In several cases
+        those turned out to be real usability issues.
+      </p>
+
+      <p>For example, I noticed some vestigial code that could only be exercised
+        by signing in and navigating to a specific URL. I needed to remove the
+        (effectively dead) code or find a way to make it more accessible.
+      </p>
+
+    <h4>User and Developer Experience Alignment</h4>
+
+<p>It&#39;s possible to have blazing fast unit tests and horrible application
+        performance. That&#39;s not the case with E2E testing.
+      </p>
+
+      <p>Testing the entire app makes performance a pain point during
+        development. Improvements benefit developers and end-users alike.
+      </p>
+
+  <h3>Caveats</h3>
+
+<h4></h4>
+
+<p>VenueTube is a simple monolithic app with only a few external API
+        integrations. I&#39;m able to get through all existing workflows in about 90
+        seconds. Your mileage may vary.
+      </p>
+
+    <h4>Test Suite Adequacy</h4>
+
+<p>Is code coverage even a good measure of test suite adequacy? After all,
+        this test yields 100% coverage for our sum function.
+      </p>
+
+      <div class="card margin-bottom-large"><div class="card-body">
+
+
+<div></div></div></div>
+
+      <p>The only information this test gives us is that <code>sum(1, 2);</code>
+        doesn&#39;t throw an exception. Similarly, I didn&#39;t <code>assert</code> once.
+        Instead, it relies on implicit assertions made by Playwright to proceed through
+        the test. There is nothing stopping me from adding assertions but it won&#39;t
+        improve code coverage.
+      </p>
+
+      <div class="padding-left padding-right"><p class="quote svelte-1wtwg41"><i>Many forms of test adequacy criteria have been tried, and will be tried
+        in this world of faulty software. No one pretends that code coverage is
+        perfect or all-wise. Indeed, it has been said that code coverage is the
+        worst form of test adequacy criteria except for all those other forms
+        that have been tried from time to time...
+      </i></p>
+  <p class="padding-left"><small>- Winston Churchill, probably</small></p>
+</div>
+
+      <p>Code coverage isn&#39;t perfect but I haven&#39;t found anything better. One
+        non-obvious benefit is that there are two ways to increase it: add more
+        tests or reduce the source lines that need testing. Targeting the latter
+        can lead to a cleaner codebase.
+      </p>
+
+    <h4>100% Coverage</h4>
+
+<p>The 100% mark is controversial and can be difficult to attain especially
+        if you don&#39;t design for test from the start. I justify it with these two
+        arguments:
+      </p>
+      <ol><li>Any other number feels (more) arbitrary</li>
+        <li>Ensuring that every line of code executes seems like a low bar</li></ol>
+      <p>Since V8 actually returns coverage count per line, I&#39;d even be inclined
+        to go beyond 100% but need to give more thought to how that would work.
+      </p>
+
+  <h3>Next Steps</h3>
+
+<p>I&#39;m certainly not advocating the use of a single test to provide all of
+      your quality assurance. That would be crazy... right?
+    </p>
+
+    <p>Here are some of the next steps I&#39;ll take to shore up my QA program.</p>
+
+    <h4>Decomposition</h4>
+
+<p>Splitting the test into independent workflows could improve isolation
+        and reduce runtime through parallelization.
+      </p>
+    <h4>Database Setup</h4>
+
+<p>Seeding the database could speed up certain workflows and reduce
+        flakiness. In one case, my test started failing because randomly
+        generated content contained the word &quot;Holler&quot; which is used in an
+        element selector.
+      </p>
+    <h4>Unit Testing</h4>
+
+<p>Complementing E2E tests with unit tests focused on especially complex or
+        sensitive operations. Many low-level functions that are only lightly
+        exercised here would make great unit testing candidates.
+      </p>
+
+  <h3>Conclusion</h3>
+
+<p>If you are early on in development of your app, I&#39;d recommend trying out
+      uni-testing™️. It&#39;s a low-barrier way to focus on UX and catch potentially
+      embarrassing issues before your users do.
+    </p>
+
+    <p>Once you get some traction, decompose the test suite into a proper test
+      pyramid including integration and unit tests.
+    </p>
+
+    <p>In the meantime, tell anyone who&#39;ll listen that your application has 100%
+      code coverage.
+    </p>
+
+  <h3>Resources</h3>
+
+<div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">docs</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="warning svelte-ay64ok" href="https://playwright.dev/docs/intro" target="_blank" rel="noreferrer">Playwright</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://github.com/nodemailer/nodemailer" target="_blank" rel="noreferrer">Nodemailer</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://github.com/postalsys/imapflow" target="_blank" rel="noreferrer">ImapFlow</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">package</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class=" svelte-ay64ok" href="https://github.com/nodemailer/mailparser" target="_blank" rel="noreferrer">mailparser</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://kentcdodds.com/blog/write-tests" target="_blank" rel="noreferrer">Write tests. Not too many. Mostly integration.</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html" target="_blank" rel="noreferrer">TestPyramid</a></div>
+    </div><div class="row"><div class="col-12 sm-1 margin-right"><small class="text-muted">article</small></div>
+      <div class="col-fill svelte-1qtbsg2"><a class="success svelte-ay64ok" href="https://martinfowler.com/bliki/TestPyramid.html" target="_blank" rel="noreferrer">Just Say No to More End-to-End Tests</a></div>
+    </div></article></main>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_9vwkc9 = {
+						env: {},
+						assets: new URL("..", location.href).pathname.replace(/^\/$/, ''),
+						element: document.currentScript.parentElement
+					};
+
+					const data = [null,null,null];
+
+					Promise.all([
+						import("../_app/immutable/entry/start.21273dc2.mjs"),
+						import("../_app/immutable/entry/app.31671333.mjs")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_9vwkc9.element, {
+							node_ids: [0, 2, 7],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
